@@ -39,6 +39,7 @@
             <table class="table table-bordered">
                 <thead class="table-dark">
                     <tr>
+                        <th>Imagen</th> <!-- Nueva columna para la imagen -->
                         <th>Producto</th>
                         <th>Precio</th>
                         <th>Cantidad</th>
@@ -49,6 +50,10 @@
                 <tbody>
                     {% for item in carrito %}
                     <tr>
+                        <!-- Mostrar la imagen del producto -->
+                        <td>
+                            <img src="{{ item.producto.imagen.url }}" alt="{{ item.producto.nombre }}" width="100">
+                        </td>
                         <td>{{ item.producto.nombre }}</td>
                         <td>{{ item.producto.precio|floatformat:2 }} USD</td>
                         <td>

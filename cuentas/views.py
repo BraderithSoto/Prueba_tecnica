@@ -19,8 +19,10 @@ def carrito(request):
     if not request.user.is_authenticated:
         messages.error(request, "Debes iniciar sesión para ver tu carrito.")
         return redirect('inicio_sesion')
+    
     carrito_items = CarritoItem.objects.filter(usuario=request.user)
     total = sum(item.producto.precio * item.cantidad for item in carrito_items)
+    
     return render(request, 'cuentas/carrito.html', {'carrito_items': carrito_items, 'total': total})
 
 # Agregar producto al carrito
@@ -28,11 +30,14 @@ def agregar_al_carrito(request, producto_id):
     if not request.user.is_authenticated:
         messages.error(request, "Debes iniciar sesión para agregar productos al carrito.")
         return redirect('inicio_sesion')
+    
     producto = get_object_or_404(Producto, id=producto_id)
     carrito_item, creado = CarritoItem.objects.get_or_create(usuario=request.user, producto=producto)
+    
     if not creado:
         carrito_item.cantidad += 1
     carrito_item.save()
+    
     messages.success(request, f"Se agregó {producto.nombre} al carrito.")
     return redirect('carrito')
 
@@ -40,6 +45,7 @@ def agregar_al_carrito(request, producto_id):
 def eliminar_del_carrito(request, item_id):
     carrito_item = get_object_or_404(CarritoItem, id=item_id, usuario=request.user)
     carrito_item.delete()
+    
     messages.success(request, "Producto eliminado del carrito.")
     return redirect('carrito')
 
@@ -48,6 +54,7 @@ def finalizar_compra(request):
     if not request.user.is_authenticated:
         messages.error(request, "Debes iniciar sesión para finalizar la compra.")
         return redirect('inicio_sesion')
+    
     CarritoItem.objects.filter(usuario=request.user).delete()  # Elimina todos los productos del carrito
     messages.success(request, "¡Compra finalizada con éxito!")
     return redirect('home')

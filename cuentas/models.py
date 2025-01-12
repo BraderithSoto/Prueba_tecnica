@@ -18,4 +18,7 @@ class CarritoItem(models.Model):
     cantidad = models.PositiveIntegerField(default=1)
 
     def __str__(self):
-        return f"{self.cantidad} x {self.producto.nombre}"
+        return f"{self.producto.nombre} - {self.usuario.username}"
+
+    def total_precio(self):
+        return self.producto.precio * self.cantidad
