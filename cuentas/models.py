@@ -12,6 +12,19 @@ class Producto(models.Model):
     def __str__(self):
         return self.nombre
 
+    def reducir_stock(self, cantidad):
+        """Reduce la cantidad de stock del producto cuando se agrega al carrito."""
+        if self.cantidad_stock >= cantidad:
+            self.cantidad_stock -= cantidad
+            self.save()
+        else:
+            raise ValueError("No hay suficiente stock disponible.")
+
+    def restablecer_stock(self, cantidad):
+        """Restablece el stock del producto cuando se elimina del carrito."""
+        self.cantidad_stock += cantidad
+        self.save()
+
 class CarritoItem(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
@@ -21,4 +34,18 @@ class CarritoItem(models.Model):
         return f"{self.producto.nombre} - {self.usuario.username}"
 
     def total_precio(self):
+        """Calcula el precio total para este producto en el carrito."""
         return self.producto.precio * self.cantidad
+
+    def guardar(self):
+        """Guarda el carrito, y actualiza el stock del producto."""
+        if self.producto.cantidad_stock >= self.cantidad:
+            self.producto.reducir_stock(self.cantidad)
+            super().save()
+        else:
+            raise ValueError("No hay suficiente stock para agregar este producto al carrito.")
+
+    def eliminar(self):
+        """Elimina este ítem del carrito y restablece el stock del producto."""
+        self.producto.restablecer_stock(self.cantidad)
+        super().delete()

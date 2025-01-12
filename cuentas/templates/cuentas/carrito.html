@@ -34,7 +34,7 @@
     <div class="container mt-5">
         <h1 class="text-center mb-4">Tu Carrito</h1>
 
-        {% if carrito %}
+        {% if carrito_items %}
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead class="table-dark">
@@ -48,7 +48,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for item in carrito %}
+                    {% for item in carrito_items %}
                     <tr>
                         <!-- Mostrar la imagen del producto -->
                         <td>
@@ -59,15 +59,15 @@
                         <td>
                             <div class="d-flex align-items-center">
                                 <a href="{% url 'reducir_cantidad' item.id %}" class="btn btn-sm btn-outline-secondary me-2">
-                                    <i class="fas fa-minus"></i>
+                                    <i class="fas fa-minus"></i> Quitar
                                 </a>
                                 {{ item.cantidad }}
                                 <a href="{% url 'agregar_al_carrito' item.producto.id %}" class="btn btn-sm btn-outline-secondary ms-2">
-                                    <i class="fas fa-plus"></i>
+                                    <i class="fas fa-plus"></i> Agregar
                                 </a>
                             </div>
                         </td>
-                        <td>{{ item.total|floatformat:2 }} USD</td>
+                        <td>{{ item.total_precio|floatformat:2 }} USD</td>
                         <td>
                             <a href="{% url 'eliminar_del_carrito' item.id %}" class="btn btn-danger btn-sm">
                                 <i class="fas fa-trash"></i> Eliminar

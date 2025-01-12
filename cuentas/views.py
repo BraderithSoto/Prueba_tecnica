@@ -7,39 +7,82 @@ from .models import Producto, CarritoItem
 # Vista del home
 def home(request):
     productos = Producto.objects.all()  # Obtener todos los productos
-    return render(request, 'cuentas/home.html', {'productos': productos})
+    carrito_count = CarritoItem.objects.filter(usuario=request.user).count() if request.user.is_authenticated else 0
+    return render(request, 'cuentas/home.html', {'productos': productos, 'carrito_count': carrito_count})
 
 # Vista de productos
 def productos(request):
     productos = Producto.objects.all()  # Obtener todos los productos
     return render(request, 'cuentas/productos.html', {'productos': productos})
 
-# Vista del carrito
+# Vista de detalles de un producto
+def detalle_producto(request, producto_id):
+    producto = get_object_or_404(Producto, id=producto_id)  # Obtener producto por ID
+    return render(request, 'cuentas/detalle_producto.html', {'producto': producto})
+
 def carrito(request):
     if not request.user.is_authenticated:
         messages.error(request, "Debes iniciar sesión para ver tu carrito.")
         return redirect('inicio_sesion')
     
+    # Recupera los items del carrito del usuario
     carrito_items = CarritoItem.objects.filter(usuario=request.user)
-    total = sum(item.producto.precio * item.cantidad for item in carrito_items)
+    total = sum(item.total_precio() for item in carrito_items)
+
+    # Verifica si hay productos en el carrito
+    if not carrito_items:
+        messages.info(request, "Tu carrito está vacío.")
     
     return render(request, 'cuentas/carrito.html', {'carrito_items': carrito_items, 'total': total})
 
-# Agregar producto al carrito
 def agregar_al_carrito(request, producto_id):
     if not request.user.is_authenticated:
         messages.error(request, "Debes iniciar sesión para agregar productos al carrito.")
         return redirect('inicio_sesion')
     
     producto = get_object_or_404(Producto, id=producto_id)
+
+    # Verifica si el producto ya está en el carrito
     carrito_item, creado = CarritoItem.objects.get_or_create(usuario=request.user, producto=producto)
-    
+
+    # Si el producto ya existe en el carrito, aumenta la cantidad
     if not creado:
         carrito_item.cantidad += 1
-    carrito_item.save()
-    
+        carrito_item.save()
+    else:
+        # Si el producto no existe, lo agrega por primera vez
+        carrito_item.save()
+
     messages.success(request, f"Se agregó {producto.nombre} al carrito.")
     return redirect('carrito')
+
+# cuentas/views.py
+
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from .models import CarritoItem
+
+# Vista para reducir la cantidad de un producto en el carrito
+def reducir_cantidad(request, item_id):
+    if not request.user.is_authenticated:
+        messages.error(request, "Debes iniciar sesión para modificar tu carrito.")
+        return redirect('inicio_sesion')
+
+    # Obtener el item del carrito
+    carrito_item = get_object_or_404(CarritoItem, id=item_id, usuario=request.user)
+
+    # Reducir la cantidad
+    if carrito_item.cantidad > 1:
+        carrito_item.cantidad -= 1
+        carrito_item.save()
+        messages.success(request, f"La cantidad de {carrito_item.producto.nombre} ha sido reducida.")
+    else:
+        # Si la cantidad es 1, puedes eliminar el producto del carrito
+        carrito_item.delete()
+        messages.success(request, f"{carrito_item.producto.nombre} ha sido eliminado del carrito.")
+    
+    return redirect('carrito')
+
 
 # Eliminar producto del carrito
 def eliminar_del_carrito(request, item_id):
