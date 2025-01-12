@@ -39,7 +39,7 @@
             {% for producto in productos %}
             <div class="col-md-4 mb-4">
                 <div class="card h-100 shadow-sm">
-                    <img src="{{ producto.imagen_url|default:'/static/images/default-product.jpg' }}" 
+                    <img src="{{ producto.imagen.url|default:'/static/images/default-product.jpg' }}" 
                          class="card-img-top" 
                          alt="{{ producto.nombre }}">
                     <div class="card-body">
