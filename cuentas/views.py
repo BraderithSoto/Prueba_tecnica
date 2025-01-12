@@ -87,7 +87,15 @@ def inicio_sesion(request):
         password = request.POST['password']
         
         try:
-            username = User.objects.get(email=email).username
+            usuarios = User.objects.filter(email=email)
+            if not usuarios.exists():
+                messages.error(request, "El correo no está registrado.")
+                return redirect('inicio_sesion')
+            elif usuarios.count() > 1:
+                messages.error(request, "Hay múltiples usuarios con ese correo. Contacte al administrador.")
+                return redirect('inicio_sesion')
+            
+            username = usuarios.first().username
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
