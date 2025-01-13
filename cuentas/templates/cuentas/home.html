@@ -15,7 +15,6 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <!-- Si el usuario está autenticado, mostrar nombre y cerrar sesión -->
                     {% if user.is_authenticated %}
                         <li class="nav-item">
                             <a href="{% url 'cerrar_sesion' %}" class="nav-link">
@@ -27,7 +26,6 @@
                                 <i class="fas fa-user"></i> {{ user.username }}
                             </a>
                         </li>
-                    <!-- Si el usuario no está autenticado, mostrar iniciar sesión y registrarse -->
                     {% else %}
                         <li class="nav-item">
                             <a href="{% url 'inicio_sesion' %}" class="nav-link">
@@ -39,8 +37,6 @@
                                 <i class="fas fa-user-plus"></i> Registrarse
                             </a>
                         </li>
-                        
-                        <!-- Acceso para Administrador (solo cuando no ha iniciado sesión) -->
                         <li class="nav-item">
                             <a href="/admin/" class="nav-link">
                                 <i class="fas fa-cogs"></i> Acceso para Administrador
@@ -48,7 +44,6 @@
                         </li>
                     {% endif %}
                     
-                    <!-- Carrito de compras -->
                     <li class="nav-item">
                         <a href="{% url 'carrito' %}" class="nav-link position-relative">
                             <i class="fas fa-shopping-cart"></i> Carrito
@@ -65,8 +60,32 @@
     <!-- Contenido principal -->
     <div class="container mt-5">
         <h1 class="text-center mb-4">Bienvenido a nuestra Tienda</h1>
-        
+
+        <!-- Sección de productos recomendados -->
+        <h2 class="text-center mb-4">Productos Recomendados</h2>
+        <div class="row">
+            {% for producto in productos_recomendados %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ producto.nombre }}</h5>
+                        <p class="card-text">{{ producto.descripcion|truncatewords:20 }}</p>
+                        <p class="text-primary fw-bold">{{ producto.precio|floatformat:2 }} COP</p>
+                        <a href="{% url 'detalle_producto' producto.id %}" class="btn btn-info">
+                            <i class="fas fa-info-circle"></i> Ver Detalles
+                        </a>
+                        <a href="{% url 'agregar_al_carrito' producto.id %}" class="btn btn-success">
+                            <i class="fas fa-cart-plus"></i> Agregar al carrito
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
         <!-- Galería de productos -->
+        <h2 class="text-center mb-4">Productos Disponibles</h2>
         <div class="row">
             {% for producto in productos %}
             <div class="col-md-4 mb-4">
@@ -75,7 +94,7 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ producto.nombre }}</h5>
                         <p class="card-text">{{ producto.descripcion }}</p>
-                        <p class="text-primary fw-bold">{{ producto.precio|floatformat:2 }} USD</p>
+                        <p class="text-primary fw-bold">{{ producto.precio|floatformat:2 }} COP</p>
                         <a href="{% url 'detalle_producto' producto.id %}" class="btn btn-info">
                             <i class="fas fa-info-circle"></i> Ver Detalles
                         </a>

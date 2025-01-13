@@ -30,8 +30,16 @@
         </div>
     </nav>
 
-    <!-- Contenido principal -->
+    <!-- Mostrar los mensajes de Django -->
     <div class="container mt-5">
+        {% if messages %}
+        <div class="alert alert-info">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
         <h1 class="text-center mb-4">Tu Carrito</h1>
 
         {% if carrito_items %}
@@ -39,7 +47,7 @@
             <table class="table table-bordered">
                 <thead class="table-dark">
                     <tr>
-                        <th>Imagen</th> <!-- Nueva columna para la imagen -->
+                        <th>Imagen</th>
                         <th>Producto</th>
                         <th>Precio</th>
                         <th>Cantidad</th>
@@ -50,7 +58,6 @@
                 <tbody>
                     {% for item in carrito_items %}
                     <tr>
-                        <!-- Mostrar la imagen del producto -->
                         <td>
                             <img src="{{ item.producto.imagen.url }}" alt="{{ item.producto.nombre }}" width="100">
                         </td>
@@ -58,16 +65,27 @@
                         <td>{{ item.producto.precio|floatformat:2 }} USD</td>
                         <td>
                             <div class="d-flex align-items-center">
-                                <a href="{% url 'reducir_cantidad' item.id %}" class="btn btn-sm btn-outline-secondary me-2">
-                                    <i class="fas fa-minus"></i> Quitar
-                                </a>
-                                {{ item.cantidad }}
-                                <a href="{% url 'agregar_al_carrito' item.producto.id %}" class="btn btn-sm btn-outline-secondary ms-2">
-                                    <i class="fas fa-plus"></i> Agregar
-                                </a>
+                                {% if item.producto.cantidad_stock <= 0 %}
+                                    <p class="text-danger">Agotado</p>
+                                    <button class="btn btn-secondary btn-sm" disabled>Sin stock</button>
+                                {% else %}
+                                    <a href="{% url 'reducir_cantidad' item.id %}" class="btn btn-sm btn-outline-secondary me-2">
+                                        <i class="fas fa-minus"></i> Quitar
+                                    </a>
+                                    {{ item.cantidad }}
+                                    <a href="{% url 'agregar_al_carrito' item.producto.id %}" class="btn btn-sm btn-outline-secondary ms-2">
+                                        <i class="fas fa-plus"></i> Agregar
+                                    </a>
+                                {% endif %}
                             </div>
                         </td>
-                        <td>{{ item.total_precio|floatformat:2 }} USD</td>
+                        <td>
+                            {% if item.producto.cantidad_stock > 0 %}
+                                {{ item.total_precio|floatformat:2 }} USD
+                            {% else %}
+                                <span class="text-muted">Producto agotado</span>
+                            {% endif %}
+                        </td>
                         <td>
                             <a href="{% url 'eliminar_del_carrito' item.id %}" class="btn btn-danger btn-sm">
                                 <i class="fas fa-trash"></i> Eliminar
@@ -88,9 +106,15 @@
             <a href="{% url 'productos' %}" class="btn btn-primary">
                 <i class="fas fa-shopping-bag"></i> Seguir Comprando
             </a>
+            {% if total > 0 %}
             <a href="{% url 'finalizar_compra' %}" class="btn btn-success">
                 <i class="fas fa-credit-card"></i> Finalizar Compra
             </a>
+            {% else %}
+            <a href="#" class="btn btn-secondary" disabled>
+                <i class="fas fa-credit-card"></i> Finalizar Compra
+            </a>
+            {% endif %}
         </div>
         {% else %}
         <div class="alert alert-warning text-center">

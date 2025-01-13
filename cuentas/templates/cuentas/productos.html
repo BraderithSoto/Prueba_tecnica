@@ -30,10 +30,40 @@
         </div>
     </nav>
 
-    <!-- Contenido principal -->
+    <!-- Mostrar los mensajes de Django -->
     <div class="container mt-5">
+        {% if messages %}
+        <div class="alert alert-info">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
         <h1 class="text-center mb-4">Productos Disponibles</h1>
 
+        <!-- Formulario de búsqueda y filtrado -->
+        <form method="get" class="mb-4">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <input type="text" name="q" class="form-control" placeholder="Buscar productos..." value="{{ request.GET.q }}">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <select name="orden" class="form-select">
+                        <option value="" {% if not request.GET.orden %}selected{% endif %}>Ordenar por</option>
+                        <option value="precio" {% if request.GET.orden == 'precio' %}selected{% endif %}>Precio</option>
+                        <option value="nombre" {% if request.GET.orden == 'nombre' %}selected{% endif %}>Nombre</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Buscar
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Lista de productos -->
         {% if productos %}
         <div class="row">
             {% for producto in productos %}
@@ -45,15 +75,22 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ producto.nombre }}</h5>
                         <p class="card-text">{{ producto.descripcion|truncatewords:20 }}</p>
-                        <p class="text-primary fw-bold">{{ producto.precio|floatformat:2 }} USD</p>
-                        <div class="d-flex justify-content-between">
-                            <a href="{% url 'agregar_al_carrito' producto.id %}" class="btn btn-success">
-                                <i class="fas fa-cart-plus"></i> Agregar al carrito
-                            </a>
-                            <a href="{% url 'detalle_producto' producto.id %}" class="btn btn-info">
-                                <i class="fas fa-info-circle"></i> Detalles
-                            </a>
-                        </div>
+                        <p class="text-primary fw-bold">{{ producto.precio|floatformat:2 }} COP</p>
+
+                        <!-- Comprobación de stock -->
+                        {% if producto.cantidad_stock <= 0 %}
+                            <p class="text-danger">Producto agotado</p>
+                            <button class="btn btn-secondary" disabled><i class="fas fa-cart-plus"></i> Agotado</button>
+                        {% else %}
+                            <div class="d-flex justify-content-between">
+                                <a href="{% url 'agregar_al_carrito' producto.id %}" class="btn btn-success">
+                                    <i class="fas fa-cart-plus"></i> Agregar al carrito
+                                </a>
+                                <a href="{% url 'detalle_producto' producto.id %}" class="btn btn-info">
+                                    <i class="fas fa-info-circle"></i> Detalles
+                                </a>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>

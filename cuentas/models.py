@@ -8,6 +8,8 @@ class Producto(models.Model):
     cantidad_stock = models.PositiveIntegerField()
     imagen = models.ImageField(upload_to='productos/')
     especificaciones = models.TextField()
+    agotado = models.BooleanField(default=False)  # Nuevo campo para indicar si el producto está agotado
+    recomendado = models.BooleanField(default=False)  # Campo recomendado (agregado)
 
     def __str__(self):
         return self.nombre
@@ -18,12 +20,20 @@ class Producto(models.Model):
             self.cantidad_stock -= cantidad
             self.save()
         else:
+            self.agotado = True  # Marca el producto como agotado si el stock es insuficiente
+            self.save()
             raise ValueError("No hay suficiente stock disponible.")
-
+    
     def restablecer_stock(self, cantidad):
         """Restablece el stock del producto cuando se elimina del carrito."""
         self.cantidad_stock += cantidad
+        if self.cantidad_stock > 0:
+            self.agotado = False  # Si el producto tiene stock nuevamente, se marca como disponible
         self.save()
+
+    def obtener_precio_en_pesos(self):
+        """Devuelve el precio formateado en pesos colombianos."""
+        return f"${self.precio:,.2f}"
 
 class CarritoItem(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -39,11 +49,16 @@ class CarritoItem(models.Model):
 
     def guardar(self):
         """Guarda el carrito, y actualiza el stock del producto."""
+        if self.producto.agotado:  # Verifica si el producto está agotado
+            raise ValueError("Este producto está agotado y no se puede agregar al carrito.")
+        
+        # Verifica si el stock es suficiente
         if self.producto.cantidad_stock >= self.cantidad:
+            # Reduce el stock del producto
             self.producto.reducir_stock(self.cantidad)
-            super().save()
+            super().save()  # Guarda el item en el carrito
         else:
-            raise ValueError("No hay suficiente stock para agregar este producto al carrito.")
+            raise ValueError(f"No hay suficiente stock para agregar {self.cantidad} unidades de {self.producto.nombre} al carrito.")
 
     def eliminar(self):
         """Elimina este ítem del carrito y restablece el stock del producto."""
@@ -61,6 +76,8 @@ class Pedido(models.Model):
     total = models.DecimalField(max_digits=10, decimal_places=2)
     estado = models.CharField(max_length=20, choices=ESTADOS, default='espera_confirmacion')
     fecha = models.DateTimeField(auto_now_add=True)
+    direccion = models.CharField(max_length=500, default='Dirección no proporcionada')  # Valor por defecto
+    metodo_pago = models.CharField(max_length=100, default='Pago no especificado')  # Valor por defecto
 
     def __str__(self):
         return f"Pedido #{self.id} - {self.usuario.username} - {self.estado}"

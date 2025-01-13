@@ -28,3 +28,19 @@ class ProductoForm(forms.ModelForm):
     class Meta:
         model = Producto
         fields = ['nombre', 'descripcion', 'precio', 'cantidad_stock', 'imagen', 'especificaciones']
+
+# Formulario para el filtrado y búsqueda de productos
+class ProductoFiltroForm(forms.Form):
+    q = forms.CharField(max_length=100, required=False, label='Buscar')
+    orden = forms.ChoiceField(choices=[('', 'Ordenar por'), ('nombre', 'Nombre'), ('precio', 'Precio')], required=False)
+    precio_min = forms.DecimalField(max_digits=10, decimal_places=2, required=False, label='Precio Mínimo')
+    precio_max = forms.DecimalField(max_digits=10, decimal_places=2, required=False, label='Precio Máximo')
+
+    def clean(self):
+        cleaned_data = super().clean()
+        precio_min = cleaned_data.get('precio_min')
+        precio_max = cleaned_data.get('precio_max')
+
+        if precio_min and precio_max and precio_min > precio_max:
+            raise forms.ValidationError("El precio mínimo no puede ser mayor al precio máximo.")
+        return cleaned_data

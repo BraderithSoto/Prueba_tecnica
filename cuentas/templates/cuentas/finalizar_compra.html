@@ -23,12 +23,17 @@
         {% if messages %}
         <div class="mb-3">
             {% for message in messages %}
-            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %}" role="alert">
-                {{ message }}
-            </div>
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %}" role="alert">
+                    {{ message }}
+                </div>
             {% endfor %}
         </div>
         {% endif %}
+
+        <!-- Total de la compra -->
+        <div class="mb-3">
+            <h4>Total de la compra: <span class="text-success">{{ total|floatformat:2 }} COP</span></h4>
+        </div>
 
         <!-- Formulario para finalizar compra -->
         <form method="post" id="finalizarCompraForm">
