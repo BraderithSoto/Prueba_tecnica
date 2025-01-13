@@ -49,3 +49,18 @@ class CarritoItem(models.Model):
         """Elimina este ítem del carrito y restablece el stock del producto."""
         self.producto.restablecer_stock(self.cantidad)
         super().delete()
+
+class Pedido(models.Model):
+    ESTADOS = [
+        ('en_proceso', 'En proceso'),
+        ('espera_confirmacion', 'Espera de confirmación'),
+        ('entregado', 'Entregado'),
+    ]
+    
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    total = models.DecimalField(max_digits=10, decimal_places=2)
+    estado = models.CharField(max_length=20, choices=ESTADOS, default='espera_confirmacion')
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Pedido #{self.id} - {self.usuario.username} - {self.estado}"

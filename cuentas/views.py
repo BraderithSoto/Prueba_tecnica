@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .models import Producto, CarritoItem
+from django.contrib.auth.forms import AuthenticationForm
+from .models import Producto, CarritoItem, Pedido
 
 # Vista del home
 def home(request):
@@ -92,15 +93,39 @@ def eliminar_del_carrito(request, item_id):
     messages.success(request, "Producto eliminado del carrito.")
     return redirect('carrito')
 
-# Finalizar compra
 def finalizar_compra(request):
-    if not request.user.is_authenticated:
-        messages.error(request, "Debes iniciar sesión para finalizar la compra.")
-        return redirect('inicio_sesion')
-    
-    CarritoItem.objects.filter(usuario=request.user).delete()  # Elimina todos los productos del carrito
-    messages.success(request, "¡Compra finalizada con éxito!")
-    return redirect('home')
+    if request.method == 'POST':
+        direccion = request.POST.get('direccion')
+        metodo_pago = request.POST.get('metodo_pago')
+        password = request.POST.get('password')
+
+        # Verificar la contraseña del usuario
+        usuario = authenticate(username=request.user.username, password=password)
+        if usuario is None:
+            # Contraseña incorrecta, agregar mensaje de error
+            messages.error(request, "La contraseña es incorrecta. Por favor, inténtalo de nuevo.")
+            return redirect('finalizar_compra')
+
+        # Validar el carrito
+        carrito_items = CarritoItem.objects.filter(usuario=request.user)
+        if not carrito_items.exists():
+            messages.error(request, "El carrito está vacío. No puedes finalizar una compra sin productos.")
+            return redirect('carrito')
+
+        # Calcular el total del pedido
+        total = sum(item.total_precio() for item in carrito_items)
+
+        # Crear el pedido
+        pedido = Pedido.objects.create(usuario=request.user, total=total)
+        
+        # Limpiar el carrito
+        carrito_items.delete()
+
+        # Mostrar mensaje de éxito
+        messages.success(request, "¡Compra realizada con éxito! Gracias por tu pedido.")
+        return redirect('productos')
+    context = {}
+    return render(request, 'cuentas/finalizar_compra.html', context)
 
 # Vista de registro
 def registro(request):

@@ -56,8 +56,8 @@ ROOT_URLCONF = 'tienda.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],  
-        'APP_DIRS': True,  
+        'DIRS': [BASE_DIR / "templates"],  
+        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -68,6 +68,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 
 WSGI_APPLICATION = 'tienda.wsgi.application'
@@ -137,6 +138,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+STATIC_URL = '/static/'
+# Configuración para desarrollo local
+STATICFILES_DIRS = [
+    BASE_DIR / "templates" / "styles",
+]
 
 
 # Asegúrate de que los archivos de medios se sirvan en desarrollo

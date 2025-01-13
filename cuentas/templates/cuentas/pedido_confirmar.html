@@ -1,0 +1,106 @@
+{% extends 'admin/base_site.html' %}
+
+{% block content %}
+  <h1>Pedidos en espera</h1>
+  
+  <!-- Tabla de pedidos -->
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Usuario</th>
+        <th>Total</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for pedido in pedidos %}
+        <tr>
+          <td>{{ pedido.id }}</td>
+          <td>{{ pedido.usuario.username }}</td>
+          <td>{{ pedido.total }}</td>
+          <td>{{ pedido.estado }}</td>
+          <td>
+            <button class="action-checkbox" data-pedido-id="{{ pedido.id }}">Marcar como entregado</button>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% block extrahead %}
+    {{ block.super }}
+    <!-- Enlace al archivo CSS para el modal -->
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/modal.css' %}">
+    
+    <script type="text/javascript">
+      document.addEventListener('DOMContentLoaded', function() {
+          // Obtener el botón de acción personalizada
+          var actionButtons = document.querySelectorAll('.action-checkbox');
+          
+          // Crear la ventana emergente (modal)
+          var modalOverlay = document.createElement('div');
+          modalOverlay.id = 'modalOverlay';
+          
+          var modalContent = document.createElement('div');
+          modalContent.id = 'modalContent';
+          modalContent.innerHTML = `
+              <h2>Confirmación de compra</h2>
+              <p>Por favor, ingresa la contraseña para confirmar la acción.</p>
+              <input type="password" id="adminPassword" style="margin-bottom: 10px;">
+              <button id="confirmPassword" style="margin-right: 10px;">Confirmar</button>
+              <button id="cancelPassword" class="cancel">Cancelar</button>
+          `;
+          modalOverlay.appendChild(modalContent);
+          document.body.appendChild(modalOverlay);
+
+          // Función para mostrar el modal
+          function showModal() {
+              modalOverlay.style.display = 'block';
+          }
+
+          // Función para ocultar el modal
+          function hideModal() {
+              modalOverlay.style.display = 'none';
+          }
+
+          // Acción para cancelar
+          document.getElementById('cancelPassword').addEventListener('click', hideModal);
+
+          // Acción para confirmar
+          document.getElementById('confirmPassword').addEventListener('click', function() {
+              var password = document.getElementById('adminPassword').value;
+              if (password) {
+                  // Enviar la contraseña al backend para verificar
+                  fetch("{% url 'verificar_contraseña' %}", {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json',
+                          'X-CSRFToken': '{{ csrf_token }}',
+                      },
+                      body: JSON.stringify({ password: password })
+                  })
+                  .then(response => response.json())
+                  .then(data => {
+                      if (data.valid) {
+                          // Si la contraseña es correcta, realizar la acción
+                          document.querySelector('input[name="action"]').click();
+                          hideModal();
+                      } else {
+                          alert('Contraseña incorrecta. Intenta nuevamente.');
+                      }
+                  });
+              } else {
+                  alert('Por favor ingresa la contraseña.');
+              }
+          });
+
+          // Escuchar los botones de acción personalizados
+          actionButtons.forEach(button => {
+              button.addEventListener('click', showModal);
+          });
+      });
+    </script>
+  {% endblock %}
+{% endblock %}

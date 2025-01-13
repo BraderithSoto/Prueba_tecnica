@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Producto, CarritoItem
+from .models import Producto, CarritoItem, Pedido
+from django.contrib.auth.models import User
 
 # Filtro personalizado para productos sin stock
 class SinStockFilter(admin.SimpleListFilter):
@@ -45,3 +46,29 @@ class CarritoItemAdmin(admin.ModelAdmin):
     def total_precio(self, obj):
         return obj.producto.precio * obj.cantidad
     total_precio.short_description = 'Precio Total'
+
+# Configuración del modelo Pedido en el administrador
+@admin.register(Pedido)
+class PedidoAdmin(admin.ModelAdmin):
+    list_display = ('id', 'usuario', 'total', 'estado', 'fecha')
+    list_filter = ('estado', 'fecha')
+    search_fields = ('usuario__username',)
+    actions = ['marcar_como_entregado', 'marcar_como_pendiente', 'marcar_como_cancelado']
+
+    def marcar_como_entregado(self, request, queryset):
+        # Actualizar el estado de los pedidos seleccionados
+        queryset.update(estado='entregado')
+        self.message_user(request, "Los pedidos seleccionados han sido marcados como entregados.")
+    marcar_como_entregado.short_description = 'Marcar como Entregado'
+
+    def marcar_como_pendiente(self, request, queryset):
+        # Actualizar el estado de los pedidos seleccionados a pendiente
+        queryset.update(estado='pendiente')
+        self.message_user(request, "Los pedidos seleccionados han sido marcados como pendientes.")
+    marcar_como_pendiente.short_description = 'Marcar como Pendiente'
+
+    def marcar_como_cancelado(self, request, queryset):
+        # Actualizar el estado de los pedidos seleccionados a cancelado
+        queryset.update(estado='cancelado')
+        self.message_user(request, "Los pedidos seleccionados han sido marcados como cancelados.")
+    marcar_como_cancelado.short_description = 'Marcar como Cancelado'

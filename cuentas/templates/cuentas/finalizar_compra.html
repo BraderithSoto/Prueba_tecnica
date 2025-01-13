@@ -1,32 +1,53 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finalizar Compra</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <!-- Barra de navegación -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="#">Tienda Virtual</a>
+            <a class="navbar-brand" href="{% url 'productos' %}">Tienda Virtual</a>
         </div>
     </nav>
 
     <!-- Contenido principal -->
     <div class="container mt-5">
         <h1 class="text-center mb-4">Finalizar Compra</h1>
-        <form method="post">
+
+        <!-- Mostrar mensajes de éxito o error -->
+        {% if messages %}
+        <div class="mb-3">
+            {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %}" role="alert">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Formulario para finalizar compra -->
+        <form method="post" id="finalizarCompraForm">
             {% csrf_token %}
             <div class="mb-3">
                 <label for="direccion" class="form-label">Dirección de Envío</label>
-                <textarea id="direccion" name="direccion" class="form-control" rows="3" required></textarea>
+                <textarea id="direccion" name="direccion" class="form-control" rows="3" placeholder="Ingresa tu dirección de envío" required></textarea>
             </div>
             <div class="mb-3">
                 <label for="metodo_pago" class="form-label">Método de Pago</label>
                 <select id="metodo_pago" name="metodo_pago" class="form-select" required>
+                    <option value="" disabled selected>Selecciona un método</option>
                     <option value="tarjeta">Tarjeta de Crédito/Débito</option>
                     <option value="paypal">PayPal</option>
                 </select>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Contraseña</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="Ingresa tu contraseña" required>
             </div>
             <button type="submit" class="btn btn-success w-100">
                 <i class="fas fa-check"></i> Confirmar Compra
@@ -38,5 +59,28 @@
     <footer class="bg-dark text-white text-center py-3 mt-4">
         <p class="mb-0">© 2025 Tienda Virtual. Todos los derechos reservados.</p>
     </footer>
+
+    <!-- Script JS para confirmar antes de finalizar la compra -->
+    <script>
+        // Seleccionar el formulario de finalizar compra
+        const form = document.getElementById("finalizarCompraForm");
+
+        // Añadir un evento de escucha para la acción del formulario
+        form.addEventListener("submit", function(event) {
+            // Prevenir el comportamiento por defecto del formulario
+            event.preventDefault();
+
+            // Confirmación de compra
+            const confirmacion = confirm("¿Estás seguro de que quieres confirmar la compra?");
+
+            if (confirmacion) {
+                // Si el usuario confirma, enviamos el formulario
+                form.submit();
+            } else {
+                // Si no confirma, mostramos un mensaje y no hacemos nada
+                alert("Compra cancelada.");
+            }
+        });
+    </script>
 </body>
 </html>

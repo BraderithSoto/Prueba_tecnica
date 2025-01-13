@@ -1,0 +1,88 @@
+/* Estilos generales */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+}
+
+/* Barra de navegación */
+.navbar {
+    background-color: #343a40 !important;
+}
+
+.navbar-brand {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+/* Contenedor principal */
+.container {
+    max-width: 800px;
+    margin-top: 40px;
+}
+
+/* Título principal */
+h1 {
+    font-size: 2.5rem;
+    color: #343a40;
+    margin-bottom: 30px;
+}
+
+/* Formulario */
+form {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Campos del formulario */
+.form-label {
+    font-size: 1rem;
+    color: #333333;
+}
+
+textarea.form-control, .form-select, .form-control {
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    padding: 10px;
+}
+
+textarea.form-control:focus, .form-select:focus, .form-control:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25);
+}
+
+button[type="submit"] {
+    background-color: #28a745;
+    color: white;
+    font-size: 1.2rem;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #218838;
+}
+
+/* Mensajes de error */
+.alert {
+    margin-bottom: 30px;
+}
+
+/* Pie de página */
+footer {
+    background-color: #343a40;
+    padding: 10px 0;
+    color: white;
+}
+
+footer p {
+    margin: 0;
+    font-size: 1rem;
+}
+
