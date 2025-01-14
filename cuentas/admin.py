@@ -2,7 +2,6 @@ from django.contrib import admin
 from .models import Producto, CarritoItem, Pedido
 from django.contrib.auth.models import User
 
-# Filtro personalizado para productos sin stock
 class SinStockFilter(admin.SimpleListFilter):
     title = 'Sin stock'
     parameter_name = 'sin_stock'
@@ -15,7 +14,6 @@ class SinStockFilter(admin.SimpleListFilter):
             return queryset.filter(cantidad_stock=0)
         return queryset
 
-# Configuración del modelo Producto en el administrador
 @admin.register(Producto)
 class ProductoAdmin(admin.ModelAdmin):
     list_display = ('id', 'nombre', 'precio', 'cantidad_stock')
@@ -26,17 +24,17 @@ class ProductoAdmin(admin.ModelAdmin):
 
     def actualizar_stock(self, request, queryset):
         for producto in queryset:
-            producto.cantidad_stock += 10  # Incrementar stock por 10
+            producto.cantidad_stock += 1  
             producto.save()
         self.message_user(request, "Stock actualizado con éxito.")
-    actualizar_stock.short_description = 'Incrementar Stock en 10'
+    actualizar_stock.short_description = 'Incrementar Stock en 1'
 
     def save_model(self, request, obj, form, change):
         if obj.precio < 0:
             raise ValueError("El precio no puede ser negativo.")
         super().save_model(request, obj, form, change)
 
-# Configuración del modelo CarritoItem en el administrador
+
 @admin.register(CarritoItem)
 class CarritoItemAdmin(admin.ModelAdmin):
     list_display = ('id', 'usuario', 'producto', 'cantidad', 'total_precio')
@@ -47,7 +45,6 @@ class CarritoItemAdmin(admin.ModelAdmin):
         return obj.producto.precio * obj.cantidad
     total_precio.short_description = 'Precio Total'
 
-# Configuración del modelo Pedido en el administrador
 @admin.register(Pedido)
 class PedidoAdmin(admin.ModelAdmin):
     list_display = ('id', 'usuario', 'total', 'estado', 'fecha')
@@ -56,19 +53,17 @@ class PedidoAdmin(admin.ModelAdmin):
     actions = ['marcar_como_entregado', 'marcar_como_pendiente', 'marcar_como_cancelado']
 
     def marcar_como_entregado(self, request, queryset):
-        # Actualizar el estado de los pedidos seleccionados
         queryset.update(estado='entregado')
         self.message_user(request, "Los pedidos seleccionados han sido marcados como entregados.")
     marcar_como_entregado.short_description = 'Marcar como Entregado'
 
     def marcar_como_pendiente(self, request, queryset):
-        # Actualizar el estado de los pedidos seleccionados a pendiente
         queryset.update(estado='pendiente')
         self.message_user(request, "Los pedidos seleccionados han sido marcados como pendientes.")
     marcar_como_pendiente.short_description = 'Marcar como Pendiente'
 
     def marcar_como_cancelado(self, request, queryset):
-        # Actualizar el estado de los pedidos seleccionados a cancelado
+        
         queryset.update(estado='cancelado')
         self.message_user(request, "Los pedidos seleccionados han sido marcados como cancelados.")
     marcar_como_cancelado.short_description = 'Marcar como Cancelado'

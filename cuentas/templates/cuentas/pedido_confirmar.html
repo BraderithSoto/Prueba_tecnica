@@ -32,7 +32,7 @@
   {% block extrahead %}
     {{ block.super }}
     <!-- Enlace al archivo CSS para el modal -->
-    <link rel="stylesheet" type="text/css" href="{% static 'styles/modal.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/pedido_confirmar.css' %}">
     
     <script type="text/javascript">
       document.addEventListener('DOMContentLoaded', function() {
@@ -101,6 +101,11 @@
               button.addEventListener('click', showModal);
           });
       });
+
+    <footer class="bg-success text-white text-center py-3 mt-4">
+        <p class="mb-0" style="font-size: 1.1rem;">© 2025 Tienda Virtual. Todos los derechos reservados.</p>
+    </footer>
+    
     </script>
   {% endblock %}
 {% endblock %}

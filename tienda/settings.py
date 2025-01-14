@@ -138,13 +138,18 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 STATIC_URL = '/static/'
-# Configuración para desarrollo local
+
 STATICFILES_DIRS = [
     BASE_DIR / "templates" / "styles",
 ]
 
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Asegúrate de que los archivos de medios se sirvan en desarrollo
+
 if DEBUG:
     from django.conf import settings
     from django.conf.urls.static import static
+
+
+LOGIN_URL = 'inicio-sesion'
+LOGOUT_URL = 'inicio-sesion'

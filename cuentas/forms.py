@@ -29,7 +29,6 @@ class ProductoForm(forms.ModelForm):
         model = Producto
         fields = ['nombre', 'descripcion', 'precio', 'cantidad_stock', 'imagen', 'especificaciones']
 
-# Formulario para el filtrado y búsqueda de productos
 class ProductoFiltroForm(forms.Form):
     q = forms.CharField(max_length=100, required=False, label='Buscar')
     orden = forms.ChoiceField(choices=[('', 'Ordenar por'), ('nombre', 'Nombre'), ('precio', 'Precio')], required=False)
