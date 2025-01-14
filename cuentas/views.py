@@ -24,6 +24,76 @@ def home(request):
     })
 
 @login_required
+def crear_producto(request):
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        precio = request.POST.get('precio')
+        cantidad_stock = request.POST.get('cantidad_stock')
+        descripcion = request.POST.get('descripcion')
+        especificaciones = request.POST.get('especificaciones')
+        imagen = request.FILES.get('imagen')  # Para manejar la imagen subida
+
+        # Crear un nuevo producto
+        producto = Producto.objects.create(
+            nombre=nombre,
+            precio=precio,
+            cantidad_stock=cantidad_stock,
+            descripcion=descripcion,
+            especificaciones=especificaciones,
+            imagen=imagen,
+            usuario=request.user  # Aseguramos que el producto lo haya creado el usuario actual
+        )
+
+        messages.success(request, "Producto creado con éxito.")
+        return redirect('productos')
+
+    return render(request, 'cuentas/crear_producto.html')
+
+@login_required
+def editar_producto(request, producto_id):
+    producto = Producto.objects.get(id=producto_id)
+
+    # Asegurarse de que el usuario sea el propietario del producto
+    if producto.usuario != request.user:
+        messages.error(request, "No tienes permiso para editar este producto.")
+        return redirect('productos')
+
+    if request.method == 'POST':
+        producto.nombre = request.POST.get('nombre')
+        producto.precio = request.POST.get('precio')
+        producto.cantidad_stock = request.POST.get('cantidad_stock')
+        producto.descripcion = request.POST.get('descripcion')
+        producto.especificaciones = request.POST.get('especificaciones')
+
+        # Si se sube una nueva imagen, la actualizamos
+        if 'imagen' in request.FILES:
+            producto.imagen = request.FILES['imagen']
+
+        producto.save()
+
+        messages.success(request, "Producto actualizado con éxito.")
+        return redirect('productos')
+
+    return render(request, 'cuentas/editar_producto.html', {'producto': producto})
+
+@login_required
+def eliminar_producto(request, producto_id):
+    producto = Producto.objects.get(id=producto_id)
+
+    # Asegurarse de que el usuario sea el propietario del producto
+    if producto.usuario != request.user:
+        messages.error(request, "No tienes permiso para eliminar este producto.")
+        return redirect('productos')
+
+    if request.method == 'POST':
+        producto.delete()
+        messages.success(request, "Producto eliminado con éxito.")
+        return redirect('productos')
+
+    return render(request, 'cuentas/eliminar_producto.html', {'producto': producto})
+
+
+@login_required
 def productos(request):
     form = ProductoFiltroForm(request.GET)
     productos = Producto.objects.all()  
@@ -72,6 +142,7 @@ def carrito(request):
         'total': total,
         'productos_agotados': productos_agotados
     })
+
 
 @login_required
 def agregar_al_carrito(request, producto_id):

@@ -10,7 +10,7 @@
 <body>
      <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #A7D8D1;"> <!-- Verde menta -->
         <div class="container">
-            <a class="navbar-brand" href="#" style="color: #1C6E6C; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">Tienda Virtual</a> <!-- Texto en un verde más oscuro -->
+            <a class="navbar-brand" href="#" style="color: #1C6E6C; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">Tienda Virtual</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -28,6 +28,12 @@
                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                                 {{ carrito_count|default:0 }}
                             </span>
+                        </a>
+                    </li>
+                    <!-- Botón Agregar Producto visible para todos los usuarios -->
+                    <li class="nav-item ms-3">
+                        <a href="{% url 'crear_producto' %}" class="btn btn-success">
+                            <i class="fas fa-plus"></i> Agregar Producto
                         </a>
                     </li>
                 </ul>
