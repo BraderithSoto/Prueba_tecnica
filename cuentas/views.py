@@ -78,12 +78,12 @@ def editar_producto(request, producto_id):
 @login_required
 def eliminar_producto(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
-
+    
     # Verificar si el producto pertenece al usuario
     if producto.usuario != request.user:
         messages.error(request, "No tienes permiso para eliminar este producto.")
         return redirect('productos')
-
+    
     if request.method == 'POST':  # Confirmación de eliminación
         producto.delete()
         messages.success(request, "Producto eliminado con éxito.")

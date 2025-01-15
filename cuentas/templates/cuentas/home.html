@@ -79,9 +79,6 @@
                                         <a href="{% url 'detalle_producto' producto.id %}" class="btn btn-info btn-sm">
                                             <i class="fas fa-info-circle"></i> Ver Detalles
                                         </a>
-                                        <a href="{% url 'agregar_al_carrito' producto.id %}" class="btn btn-success btn-sm">
-                                            <i class="fas fa-cart-plus"></i> Agregar al carrito
-                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -111,9 +108,6 @@
                         <p class="text-primary fw-bold">{{ producto.precio|floatformat:2 }} COP</p>
                         <a href="{% url 'detalle_producto' producto.id %}" class="btn btn-info btn-sm">
                             <i class="fas fa-info-circle"></i> Ver Detalles
-                        </a>
-                        <a href="{% url 'agregar_al_carrito' producto.id %}" class="btn btn-success btn-sm">
-                            <i class="fas fa-cart-plus"></i> Agregar al carrito
                         </a>
                     </div>
                 </div>
