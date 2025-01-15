@@ -11,7 +11,7 @@
      <!-- Encabezado con barra de navegación -->
      <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #A7D8D1;"> <!-- Verde menta -->
         <div class="container">
-            <a class="navbar-brand" href="#" style="color: #1C6E6C; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">Tienda Virtual</a> <!-- Texto en un verde más oscuro -->
+            <a class="navbar-brand" href="#" style="color: #1C6E6C; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">Carrito de Compras</a> <!-- Texto en un verde más oscuro -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -65,7 +65,7 @@
                             <img src="{{ item.producto.imagen.url }}" alt="{{ item.producto.nombre }}" width="100">
                         </td>
                         <td>{{ item.producto.nombre }}</td>
-                        <td>{{ item.producto.precio|floatformat:2 }} USD</td>
+                        <td>{{ item.producto.precio|floatformat:0 }} USD</td>
                         <td>
                             <div class="d-flex align-items-center">
                                 {% if item.producto.cantidad_stock <= 0 %}
@@ -84,7 +84,7 @@
                         </td>
                         <td>
                             {% if item.producto.cantidad_stock > 0 %}
-                                {{ item.total_precio|floatformat:2 }} COP
+                                {{ item.total_precio|floatformat:0 }} COP
                             {% else %}
                                 <span class="text-muted">Producto agotado</span>
                             {% endif %}
@@ -100,7 +100,7 @@
                 <tfoot>
                     <tr>
                         <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                        <td colspan="2"><strong>{{ total|floatformat:2 }} COP</strong></td>
+                        <td colspan="2"><strong>{{ total|floatformat:0 }} COP</strong></td>
                     </tr>
                 </tfoot>
             </table>

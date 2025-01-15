@@ -6,14 +6,15 @@ body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    line-height: 1.6;
 }
 
 /* Encabezado */
 .navbar {
     background-color: #1693A5; /* Azul */
-    padding: 20px 0;
-    border-radius: 0 0 30px 30px; /* Bordes redondeados */
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    padding: 25px 0;
+    border-radius: 0 0 30px 30px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     z-index: 10;
     transition: background-color 0.3s ease;
 }
@@ -24,7 +25,7 @@ body {
 
 .navbar-brand {
     color: white;
-    font-size: 2.2rem;
+    font-size: 2.5rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -38,7 +39,7 @@ body {
 .navbar-nav .nav-link {
     color: white;
     font-size: 1.1rem;
-    padding: 12px 25px;
+    padding: 12px 20px;
     border-radius: 10px;
     transition: 0.3s ease-in-out;
 }
@@ -64,18 +65,18 @@ h1, h2 {
     text-align: center;
     text-transform: uppercase;
     letter-spacing: 2px;
-    margin-bottom: 20px;
+    margin-bottom: 40px;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 h1 {
-    font-size: 3.5rem;
+    font-size: 4rem;
     color: #000000; /* Negro */
     animation: fadeInUp 1s ease-out;
 }
 
 h2 {
-    font-size: 2.5rem;
+    font-size: 2.7rem;
     color: #1693A5; /* Azul */
     animation: fadeInUp 1s ease-out;
 }
@@ -92,12 +93,179 @@ h2 {
     }
 }
 
+/* Formulario de Crear/Editar Producto */
+form {
+    background-color: #FFFFFF; /* Blanco */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+form .form-label {
+    font-size: 1.2rem;
+    color: #1693A5; /* Azul */
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+form input[type="text"], form input[type="number"], form textarea {
+    font-size: 1.1rem;
+    padding: 12px;
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid #D8D8C0;
+    margin-bottom: 20px;
+    transition: border-color 0.3s ease;
+}
+
+form input[type="text"]:focus, form input[type="number"]:focus, form textarea:focus {
+    border-color: #1693A5;
+    box-shadow: 0 0 10px rgba(22, 147, 165, 0.5);
+}
+
+form .btn-primary {
+    background-color: #1693A5;
+    color: white;
+    padding: 12px 30px;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin-top: 20px;
+}
+
+form .btn-primary:hover {
+    background-color: #1D8D94; /* Azul más oscuro */
+    transform: scale(1.05);
+}
+
+form .btn-primary:focus {
+    outline: none;
+    box-shadow: 0 0 10px rgba(22, 147, 165, 0.8);
+    border-color: #1693A5;
+}
+
+/* Detalle de Producto */
+.detalle-producto {
+    background-color: #FFFFFF; /* Blanco */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+}
+
+.detalle-producto .product-image {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    border-radius: 10px;
+    border: 4px solid #1693A5; /* Azul */
+    object-fit: cover;
+    transition: all 0.3s ease-in-out;
+}
+
+.detalle-producto .product-image:hover {
+    border-color: #1D8D94; /* Azul más oscuro */
+    transform: scale(1.05);
+}
+
+.detalle-producto h2 {
+    color: #1693A5; /* Azul */
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.detalle-producto p {
+    color: #7F8C8D; /* Gris oscuro */
+    font-size: 1.1rem;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Eliminar Producto */
+.eliminar-producto {
+    background-color: #F9F9F9; /* Fondo gris claro */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+    text-align: center;
+}
+
+.eliminar-producto .btn-danger {
+    background-color: #E74C3C; /* Rojo */
+    color: white;
+    padding: 15px 40px;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.eliminar-producto .btn-danger:hover {
+    background-color: #C0392B; /* Rojo más oscuro */
+    transform: scale(1.05);
+}
+
+.eliminar-producto .btn-danger:focus {
+    outline: none;
+    box-shadow: 0 0 10px rgba(231, 76, 60, 0.8);
+    border-color: #E74C3C;
+}
+
+.eliminar-producto .btn-secondary {
+    background-color: #D8D8C0; /* Gris claro */
+    color: #000000; /* Negro */
+    padding: 12px 30px;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    margin-top: 20px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.eliminar-producto .btn-secondary:hover {
+    background-color: #F0F0D8; /* Amarillo pálido */
+    transform: scale(1.05);
+}
+
+.eliminar-producto .btn-secondary:focus {
+    outline: none;
+    box-shadow: 0 0 10px rgba(22, 147, 165, 0.8);
+    border-color: #1693A5;
+}
+
+/* Modal de confirmación */
+.modal-content {
+    border-radius: 15px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    background-color: #1693A5; /* Azul */
+    color: white;
+    border-radius: 15px 15px 0 0;
+    padding: 20px;
+}
+
+.modal-body {
+    padding: 20px;
+    font-size: 1.1rem;
+    text-align: center;
+}
+
+.modal-footer {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
 /* Productos */
 .card {
     border: none;
     border-radius: 20px;
     background-color: #FFFFFF; /* Blanco */
-    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
     height: 100%;
     transition: 0.3s ease;
     transform: scale(1);
@@ -106,6 +274,9 @@ h2 {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    padding: 15px;
+    margin: 20px;
+    min-width: 300px;
 }
 
 .card:hover {
@@ -114,7 +285,7 @@ h2 {
 }
 
 .card-img-top {
-    height: 120px; /* Reducir aún más la imagen */
+    height: 180px; /* Imagen más grande */
     object-fit: cover;
     border-radius: 20px 20px 0 0;
     margin: 0 auto;
@@ -131,150 +302,162 @@ h2 {
 .card-body {
     padding: 15px;
     text-align: center;
-    background: #F9F9F9; /* Fondo gris claro */
-    box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.1);
-    transition: background 0.3s ease-in-out;
-    flex-grow: 1;
-}
-
-.card-body:hover {
-    background: #D8D8C0; /* Gris claro */
 }
 
 .card-title {
-    font-size: 1.1rem;
-    color: #1693A5; /* Azul */
+    font-size: 1.5rem;
     font-weight: 700;
-    margin-bottom: 15px;
-    transition: color 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.card-title:hover {
-    color: #F0F0D8; /* Amarillo pálido */
+    color: #1693A5; /* Azul */
 }
 
 .card-text {
+    font-size: 1rem;
     color: #7F8C8D; /* Gris oscuro */
-    font-size: 0.85rem;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
-/* Botones */
-.card-body .btn {
-    font-size: 0.9rem;
-    padding: 6px 16px;
-    border-radius: 10px;
-    margin: 5px;
-    text-transform: uppercase;
-    font-weight: 600;
-    transition: 0.3s ease-in-out;
-}
-
-.card-body .btn-info {
-    background-color: #1693A5;
-    border: none;
-    color: white;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.card-body .btn-info:hover {
-    background-color: #1D8D94; /* Azul más oscuro */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.card-body .btn-success {
-    background-color: #D8D8C0;
-    border: none;
-    color: #000000; /* Negro */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.card-body .btn-success:hover {
-    background-color: #F0F0D8; /* Amarillo pálido */
-    color: #000000;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-/* Carrusel */
-.carousel-item {
-    transition: transform 0.5s ease;
-}
-
-.carousel-control-prev-icon, .carousel-control-next-icon {
-    background-color: #1693A5;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-}
-
-/* Pie de página */
-footer {
-    background-color: #1693A5; /* Azul */
-    color: white;
-    padding: 30px 0;
-    text-align: center;
-    border-radius: 25px 25px 0 0;
-    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
-}
-
-footer p {
-    font-size: 1.2rem;
-    font-weight: 600;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-}
-
-/* Botones generales */
-.btn-outline-primary {
-    border-color: #1693A5;
-    color: #1693A5;
-    font-size: 1.1rem;
-    padding: 10px 20px;
-    border-radius: 15px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.btn-outline-primary:hover {
-    background-color: #1693A5;
-    color: white;
-}
-
-.btn-outline-secondary {
-    border-color: #D8D8C0;
-    color: #D8D8C0;
-    font-size: 1.1rem;
-    padding: 10px 20px;
-    border-radius: 15px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.btn-outline-secondary:hover {
-    background-color: #D8D8C0;
-    color: #000000;
-}
-
-/* Ajustes para el contenedor */
-.container {
-    padding: 30px;
-}
-
-/* Productos más pequeños, centrados y no tan altos */
-.row {
+.card-footer {
+    padding: 10px;
     display: flex;
-    justify-content: center; /* Centramos los productos */
+    justify-content: space-between;
+    align-items: center;
+    background-color: #F9F9F9;
+    border-radius: 0 0 20px 20px;
+}
+
+/* Estilo para filtros y búsqueda */
+.filtros {
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.filtros input {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #D8D8C0; /* Gris claro */
+    width: 100%;
+    max-width: 300px;
+}
+
+/* Estilos adicionales para el buscador y filtros */
+.search-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.search-container input[type="text"] {
+    padding: 10px 20px;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 400px;
+    border: 1px solid #1693A5; /* Azul */
+    margin-right: 10px;
+}
+
+/* Estilos para los filtros */
+.filters {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.filters select {
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: 1px solid #1693A5; /* Azul */
+    background-color: #F0F0D8; /* Amarillo pálido */
+    font-size: 1.1rem;
+    margin: 0 10px;
+}
+
+/* Estilos para las recomendaciones */
+.recommendations {
+    display: flex;
     flex-wrap: wrap;
-    gap: 20px; /* Espaciado entre los productos */
+    justify-content: center;
 }
 
-.col-md-3 {
-    width: 250px; /* Hacemos los productos más pequeños */
-    margin-bottom: 20px; /* Menos espacio entre las filas */
+.recommendations .card {
+    width: 300px;
+    margin: 20px;
 }
 
-/* Espaciado adicional */
-.text-center {
-    text-align: center;
+
+
+/* Estilo para los botones */
+button, .btn {
+    padding: 10px 20px; /* Tamaño ajustado */
+    font-size: 1rem; /* Tamaño del texto */
+    border-radius: 8px; /* Bordes redondeados */
+    margin: 5px; /* Espaciado entre botones */
+    border: 2px solid transparent; /* Sin borde inicial */
+    color: white; /* Texto blanco predeterminado */
+    cursor: pointer; /* Cursor cambia al pasar */
+    transition: transform 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
-h1, h2 {
-    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1);
+button:hover, .btn:hover {
+    transform: scale(1.1); /* Efecto de zoom */
+    color: black; /* Texto negro */
+    border-color: black; /* Borde negro */
+}
+
+button:focus, .btn:focus {
+    outline: none; /* Sin contorno adicional */
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.5); /* Sombra negra */
+}
+
+button:active, .btn:active {
+    transform: scale(0.95); /* Efecto de clic */
+}
+
+/* Estilos específicos para el botón de eliminar (rojo siempre) */
+.btn-danger {
+    background-color: #dc3545; /* Rojo */
+    border: 2px solid transparent; /* Sin borde por defecto */
+    color: white; /* Color de texto blanco */
+    padding: 8px 16px; /* Asegura un buen tamaño */
+    transition: border-color 0.3s ease, color 0.3s ease; /* Solo transición para el borde y el color */
+}
+
+.btn-danger:hover {
+    background-color: #dc3545; /* Fondo siempre rojo */
+    color: black; /* Cambiar color de texto a negro */
+    border: 2px solid black; /* Añadir borde negro al pasar el mouse */
+}
+
+/* Estilos para el formulario (sin bordes extra para los botones dentro del formulario) */
+form .btn-danger {
+    border: none; /* Sin borde adicional */
+    outline: none; /* Sin contorno */
+    background-color: #dc3545; /* Rojo predeterminado */
+}
+
+form .btn-danger:hover {
+    background-color: #dc3545; /* Fondo siempre rojo */
+    color: black; /* Texto negro */
+    border: 2px solid black; /* Borde negro */
+}
+
+/* Evitar bordes o fondos no deseados en el formulario */
+form .btn-danger:focus {
+    box-shadow: none; /* Sin sombra extra */
+}
+
+/* Estilos para el botón de editar (amarillo) */
+.btn-warning {
+    background-color: #ffc107; /* Amarillo */
+    border: 2px solid transparent; /* Sin borde por defecto */
+    color: white; /* Color de texto blanco */
+    transition: all 0.3s ease; /* Transición suave para el hover */
+    padding: 8px 16px; /* Asegura un buen tamaño */
+}
+
+.btn-warning:hover {
+    background-color: #ffc107; /* Fondo transparente al pasar el mouse */
+    color: black; /* Cambiar color de texto a negro */
+    border: 2px solid #000000; /* Añadir borde amarillo al pasar el mouse */
 }

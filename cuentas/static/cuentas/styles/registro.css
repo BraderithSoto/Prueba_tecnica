@@ -6,14 +6,15 @@ body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    line-height: 1.6;
 }
 
 /* Encabezado */
 .navbar {
     background-color: #1693A5; /* Azul */
-    padding: 20px 0;
-    border-radius: 0 0 30px 30px; /* Bordes redondeados */
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    padding: 25px 0;
+    border-radius: 0 0 30px 30px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     z-index: 10;
     transition: background-color 0.3s ease;
 }
@@ -24,7 +25,7 @@ body {
 
 .navbar-brand {
     color: white;
-    font-size: 2.2rem;
+    font-size: 2.5rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -38,7 +39,7 @@ body {
 .navbar-nav .nav-link {
     color: white;
     font-size: 1.1rem;
-    padding: 12px 25px;
+    padding: 12px 20px;
     border-radius: 10px;
     transition: 0.3s ease-in-out;
 }
@@ -64,18 +65,18 @@ h1, h2 {
     text-align: center;
     text-transform: uppercase;
     letter-spacing: 2px;
-    margin-bottom: 20px;
+    margin-bottom: 40px;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 h1 {
-    font-size: 3.5rem;
+    font-size: 4rem;
     color: #000000; /* Negro */
     animation: fadeInUp 1s ease-out;
 }
 
 h2 {
-    font-size: 2.5rem;
+    font-size: 2.7rem;
     color: #1693A5; /* Azul */
     animation: fadeInUp 1s ease-out;
 }
@@ -97,7 +98,7 @@ h2 {
     border: none;
     border-radius: 20px;
     background-color: #FFFFFF; /* Blanco */
-    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
     height: 100%;
     transition: 0.3s ease;
     transform: scale(1);
@@ -106,6 +107,9 @@ h2 {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    padding: 15px;
+    margin: 20px;
+    min-width: 300px;
 }
 
 .card:hover {
@@ -114,7 +118,7 @@ h2 {
 }
 
 .card-img-top {
-    height: 120px; /* Reducir aún más la imagen */
+    height: 180px; /* Imagen más grande */
     object-fit: cover;
     border-radius: 20px 20px 0 0;
     margin: 0 auto;
@@ -142,7 +146,7 @@ h2 {
 }
 
 .card-title {
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     color: #1693A5; /* Azul */
     font-weight: 700;
     margin-bottom: 15px;
@@ -157,16 +161,16 @@ h2 {
 
 .card-text {
     color: #7F8C8D; /* Gris oscuro */
-    font-size: 0.85rem;
+    font-size: 1rem;
     margin-bottom: 20px;
 }
 
 /* Botones */
 .card-body .btn {
-    font-size: 0.9rem;
-    padding: 6px 16px;
+    font-size: 1rem;
+    padding: 8px 20px;
     border-radius: 10px;
-    margin: 5px;
+    margin: 10px 5px;
     text-transform: uppercase;
     font-weight: 600;
     transition: 0.3s ease-in-out;
@@ -211,14 +215,14 @@ h2 {
 footer {
     background-color: #1693A5; /* Azul */
     color: white;
-    padding: 30px 0;
+    padding: 35px 0;
     text-align: center;
     border-radius: 25px 25px 0 0;
     box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
 }
 
 footer p {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     font-weight: 600;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
@@ -228,7 +232,7 @@ footer p {
     border-color: #1693A5;
     color: #1693A5;
     font-size: 1.1rem;
-    padding: 10px 20px;
+    padding: 10px 25px;
     border-radius: 15px;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -242,7 +246,7 @@ footer p {
     border-color: #D8D8C0;
     color: #D8D8C0;
     font-size: 1.1rem;
-    padding: 10px 20px;
+    padding: 10px 25px;
     border-radius: 15px;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -257,17 +261,17 @@ footer p {
     padding: 30px;
 }
 
-/* Productos más pequeños, centrados y no tan altos */
+/* Distribución de los productos */
 .row {
     display: flex;
     justify-content: center; /* Centramos los productos */
     flex-wrap: wrap;
-    gap: 20px; /* Espaciado entre los productos */
+    gap: 40px; /* Espaciado entre los productos */
 }
 
 .col-md-3 {
-    width: 250px; /* Hacemos los productos más pequeños */
-    margin-bottom: 20px; /* Menos espacio entre las filas */
+    width: 300px; /* Productos más grandes */
+    margin-bottom: 40px; /* Más espacio entre las filas */
 }
 
 /* Espaciado adicional */
@@ -277,4 +281,36 @@ footer p {
 
 h1, h2 {
     text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Campos de formulario */
+input[type="text"], input[type="email"], input[type="password"], textarea {
+    font-size: 1rem;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #D8D8C0;
+    margin-bottom: 20px;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, textarea:focus {
+    border-color: #1693A5;
+    box-shadow: 0 0 10px rgba(22, 147, 165, 0.5);
+}
+
+/* Mejorar la experiencia de los select */
+select {
+    font-size: 1rem;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #D8D8C0;
+    width: 100%;
+    background-color: #F9F9F9;
+    transition: all 0.3s ease;
+}
+
+select:focus {
+    border-color: #1693A5;
+    box-shadow: 0 0 10px rgba(22, 147, 165, 0.5);
 }

@@ -46,7 +46,7 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ producto.nombre }}</h5>
                         <p class="card-text">{{ producto.descripcion }}</p>
-                        <p class="text-primary fw-bold">{{ producto.precio|floatformat:2 }} USD</p>
+                        <p class="text-primary fw-bold">{{ producto.precio|floatformat:0 }} USD</p>
                         <a href="{% url 'agregar_al_carrito' producto.id %}" class="btn btn-success">
                             <i class="fas fa-cart-plus"></i> Agregar al carrito
                         </a>
