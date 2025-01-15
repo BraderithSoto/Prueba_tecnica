@@ -10,6 +10,7 @@ class Producto(models.Model):
     especificaciones = models.TextField()
     agotado = models.BooleanField(default=False)
     recomendado = models.BooleanField(default=False)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)  # Usuario opcional
 
     def __str__(self):
         return self.nombre

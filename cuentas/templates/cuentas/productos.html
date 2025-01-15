@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{% static 'cuentas/styles/productos.css' %}">
 </head>
 <body>
-     <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #A7D8D1;"> <!-- Verde menta -->
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #A7D8D1;"> <!-- Verde menta -->
         <div class="container">
             <a class="navbar-brand" href="#" style="color: #1C6E6C; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">Tienda Virtual</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,7 +30,6 @@
                             </span>
                         </a>
                     </li>
-                    <!-- Botón Agregar Producto visible para todos los usuarios -->
                     <li class="nav-item ms-3">
                         <a href="{% url 'crear_producto' %}" class="btn btn-success">
                             <i class="fas fa-plus"></i> Agregar Producto
@@ -84,17 +83,35 @@
                         <h5 class="card-title">{{ producto.nombre }}</h5>
                         <p class="card-text">{{ producto.descripcion|truncatewords:20 }}</p>
                         <p class="text-primary fw-bold">{{ producto.precio|floatformat:2 }} COP</p>
+                        
                         {% if producto.cantidad_stock <= 0 %}
                             <p class="text-danger">Producto agotado</p>
                             <button class="btn btn-secondary" disabled><i class="fas fa-cart-plus"></i> Agotado</button>
                         {% else %}
                             <div class="d-flex justify-content-between">
-                                <a href="{% url 'agregar_al_carrito' producto.id %}" class="btn btn-success">
-                                    <i class="fas fa-cart-plus"></i> Agregar al carrito
-                                </a>
+                                {% if producto.usuario != request.user %}
+                                    <!-- Solo mostrar el botón de agregar al carrito si el producto no es del usuario logueado -->
+                                    <a href="{% url 'agregar_al_carrito' producto.id %}" class="btn btn-success">
+                                        <i class="fas fa-cart-plus"></i> Agregar al carrito
+                                    </a>
+                                {% endif %}
                                 <a href="{% url 'detalle_producto' producto.id %}" class="btn btn-info">
                                     <i class="fas fa-info-circle"></i> Detalles
                                 </a>
+                                {% if producto.usuario == request.user %}
+                                    <!-- Mostrar solo para el usuario propietario -->
+                                    <div class="mt-3">
+                                        <a href="{% url 'editar_producto' producto.id %}" class="btn btn-warning">
+                                            <i class="fas fa-edit"></i> Editar
+                                        </a>
+                                        <form action="{% url 'eliminar_producto' producto.id %}" method="post" class="d-inline-block">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger">
+                                                <i class="fas fa-trash"></i> Eliminar
+                                            </button>
+                                        </form>
+                                    </div>
+                                {% endif %}
                             </div>
                         {% endif %}
                     </div>

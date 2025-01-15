@@ -5,12 +5,12 @@ from django.contrib import messages
 from .models import Producto, CarritoItem, Pedido
 from .forms import ProductoFiltroForm
 
-#bloequeo de vistas
+# Bloqueo de vistas
 from django.contrib.auth.decorators import login_required
 
 
 def home(request):
-    productos = Producto.objects.all()  
+    productos = Producto.objects.all()
     productos_recomendados = Producto.objects.filter(recomendado=True)
     carrito_count = CarritoItem.objects.filter(usuario=request.user).count() if request.user.is_authenticated else 0
     
@@ -51,9 +51,9 @@ def crear_producto(request):
 
 @login_required
 def editar_producto(request, producto_id):
-    producto = Producto.objects.get(id=producto_id)
+    producto = get_object_or_404(Producto, id=producto_id)
 
-    # Asegurarse de que el usuario sea el propietario del producto
+    # Verificar si el producto pertenece al usuario
     if producto.usuario != request.user:
         messages.error(request, "No tienes permiso para editar este producto.")
         return redirect('productos')
@@ -65,7 +65,6 @@ def editar_producto(request, producto_id):
         producto.descripcion = request.POST.get('descripcion')
         producto.especificaciones = request.POST.get('especificaciones')
 
-        # Si se sube una nueva imagen, la actualizamos
         if 'imagen' in request.FILES:
             producto.imagen = request.FILES['imagen']
 
@@ -78,25 +77,34 @@ def editar_producto(request, producto_id):
 
 @login_required
 def eliminar_producto(request, producto_id):
-    producto = Producto.objects.get(id=producto_id)
+    producto = get_object_or_404(Producto, id=producto_id)
 
-    # Asegurarse de que el usuario sea el propietario del producto
+    # Verificar si el producto pertenece al usuario
     if producto.usuario != request.user:
         messages.error(request, "No tienes permiso para eliminar este producto.")
         return redirect('productos')
 
-    if request.method == 'POST':
+    if request.method == 'POST':  # Confirmación de eliminación
         producto.delete()
         messages.success(request, "Producto eliminado con éxito.")
         return redirect('productos')
 
+    # Si no es POST, mostramos la vista de confirmación
     return render(request, 'cuentas/eliminar_producto.html', {'producto': producto})
-
 
 @login_required
 def productos(request):
     form = ProductoFiltroForm(request.GET)
-    productos = Producto.objects.all()  
+    productos = Producto.objects.all()
+
+    # Filtrar productos del usuario actual
+    productos_usuario = productos.filter(usuario=request.user)
+
+    # Filtrar productos restantes de otros usuarios
+    productos_restantes = productos.exclude(usuario=request.user)
+
+    # Mostrar productos del usuario primero y los demás después
+    productos = productos_usuario | productos_restantes
 
     if form.is_valid():
         q = form.cleaned_data.get('q')
@@ -119,7 +127,7 @@ def productos(request):
     return render(request, 'cuentas/productos.html', {'productos': productos, 'form': form})
 
 def detalle_producto(request, producto_id):
-    producto = get_object_or_404(Producto, id=producto_id)  # Obtener producto por ID
+    producto = get_object_or_404(Producto, id=producto_id)
     return render(request, 'cuentas/detalle_producto.html', {'producto': producto})
 
 @login_required
@@ -142,7 +150,6 @@ def carrito(request):
         'total': total,
         'productos_agotados': productos_agotados
     })
-
 
 @login_required
 def agregar_al_carrito(request, producto_id):
