@@ -4,6 +4,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .models import Producto, CarritoItem, Pedido
 from .forms import ProductoFiltroForm
+from django.contrib.auth import update_session_auth_hash
+
 
 # Bloqueo de vistas
 from django.contrib.auth.decorators import login_required
@@ -23,7 +25,7 @@ def home(request):
         'carrito_count': carrito_count
     })
 
-@login_required
+@login_required(login_url="inicio_sesion")
 def crear_producto(request):
     if request.method == 'POST':
         nombre = request.POST.get('nombre')
@@ -49,7 +51,7 @@ def crear_producto(request):
 
     return render(request, 'cuentas/crear_producto.html')
 
-@login_required
+@login_required(login_url="inicio_sesion")
 def editar_producto(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
 
@@ -75,7 +77,7 @@ def editar_producto(request, producto_id):
 
     return render(request, 'cuentas/editar_producto.html', {'producto': producto})
 
-@login_required
+@login_required(login_url="inicio_sesion")
 def eliminar_producto(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
     
@@ -92,25 +94,27 @@ def eliminar_producto(request, producto_id):
     # Si no es POST, mostramos la vista de confirmación
     return render(request, 'cuentas/eliminar_producto.html', {'producto': producto})
 
-@login_required
+@login_required(login_url="inicio_sesion")
 def productos(request):
+    # Crear el formulario de filtros con los datos enviados por GET
     form = ProductoFiltroForm(request.GET)
+    
+    # Obtener todos los productos
     productos = Producto.objects.all()
 
-    # Filtrar productos del usuario actual
+    # Obtener productos del usuario y productos restantes
     productos_usuario = productos.filter(usuario=request.user)
-
-    # Filtrar productos restantes de otros usuarios
     productos_restantes = productos.exclude(usuario=request.user)
-
-    # Mostrar productos del usuario primero y los demás después
     productos = productos_usuario | productos_restantes
 
+    # Validar el formulario y aplicar los filtros
     if form.is_valid():
-        q = form.cleaned_data.get('q')
-        if q:
-            productos = productos.filter(nombre__icontains=q) | productos.filter(descripcion__icontains=q)
+        # Filtro por nombre
+        nombre_producto = form.cleaned_data.get('nombre_producto')
+        if nombre_producto:
+            productos = productos.filter(nombre__icontains=nombre_producto)
 
+        # Filtro por rango de precios
         precio_min = form.cleaned_data.get('precio_min')
         precio_max = form.cleaned_data.get('precio_max')
         if precio_min is not None:
@@ -118,19 +122,24 @@ def productos(request):
         if precio_max is not None:
             productos = productos.filter(precio__lte=precio_max)
 
+        # Filtro por orden (nombre o precio)
         orden = form.cleaned_data.get('orden')
         if orden == 'nombre':
             productos = productos.order_by('nombre')
         elif orden == 'precio':
             productos = productos.order_by('precio')
 
-    return render(request, 'cuentas/productos.html', {'productos': productos, 'form': form})
+    return render(request, 'cuentas/productos.html', {
+        'productos': productos,
+        'form': form,
+        'todos_los_productos': Producto.objects.all(),  # Pasamos todos los productos para la lista desplegable
+    })
 
 def detalle_producto(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
     return render(request, 'cuentas/detalle_producto.html', {'producto': producto})
 
-@login_required
+@login_required(login_url="inicio_sesion")
 def carrito(request):
     if not request.user.is_authenticated:
         messages.error(request, "Debes iniciar sesión para ver tu carrito.")
@@ -151,7 +160,7 @@ def carrito(request):
         'productos_agotados': productos_agotados
     })
 
-@login_required
+@login_required(login_url="inicio_sesion")
 def agregar_al_carrito(request, producto_id):
     if not request.user.is_authenticated:
         messages.error(request, "Debes iniciar sesión para agregar productos al carrito.")
@@ -183,7 +192,7 @@ def agregar_al_carrito(request, producto_id):
     messages.success(request, f"Producto {producto.nombre} agregado al carrito.")
     return redirect('carrito')
 
-@login_required
+@login_required(login_url="inicio_sesion")
 def reducir_cantidad(request, item_id):
     if not request.user.is_authenticated:
         messages.error(request, "Debes iniciar sesión para modificar tu carrito.")
@@ -201,7 +210,7 @@ def reducir_cantidad(request, item_id):
     
     return redirect('carrito')
 
-@login_required
+@login_required(login_url="inicio_sesion")
 def eliminar_del_carrito(request, item_id):
     carrito_item = get_object_or_404(CarritoItem, id=item_id, usuario=request.user)
     
@@ -210,7 +219,7 @@ def eliminar_del_carrito(request, item_id):
     messages.success(request, "Producto eliminado del carrito.")
     return redirect('carrito')
 
-@login_required
+@login_required(login_url="inicio_sesion")
 def finalizar_compra(request):
     if request.method == 'POST':
         direccion = request.POST.get('direccion')
@@ -299,7 +308,44 @@ def inicio_sesion(request):
 
     return render(request, 'cuentas/inicio_sesion.html')
 
+@login_required(login_url="inicio_sesion")
 def cerrar_sesion(request):
     logout(request)
     messages.success(request, "Has cerrado sesión exitosamente.")
     return redirect('home')
+
+@login_required
+def perfil_usuario(request):
+    if request.method == 'POST':
+        # Obtener datos del formulario
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        old_password = request.POST.get('old_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        user = request.user  # Usuario autenticado actual
+
+        # Actualización de nombre de usuario y correo
+        if username and email:
+            user.username = username
+            user.email = email
+            user.save()
+            messages.success(request, "Perfil actualizado correctamente.")
+
+        # Actualización de contraseña
+        if old_password and new_password and confirm_password:
+            if user.check_password(old_password):  # Verificar la contraseña actual
+                if new_password == confirm_password:  # Confirmar que las nuevas coinciden
+                    user.set_password(new_password)
+                    user.save()
+                    update_session_auth_hash(request, user)  # Mantener la sesión iniciada
+                    messages.success(request, "Contraseña actualizada correctamente.")
+                else:
+                    messages.error(request, "Las nuevas contraseñas no coinciden.")
+            else:
+                messages.error(request, "La contraseña actual es incorrecta.")
+        
+        return redirect('perfil_usuario')  # Redirigir a la misma página
+
+    return render(request, 'cuentas/perfil_usuario.html')

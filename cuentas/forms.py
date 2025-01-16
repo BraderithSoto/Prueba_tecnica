@@ -30,10 +30,30 @@ class ProductoForm(forms.ModelForm):
         fields = ['nombre', 'descripcion', 'precio', 'cantidad_stock', 'imagen', 'especificaciones']
 
 class ProductoFiltroForm(forms.Form):
-    q = forms.CharField(max_length=100, required=False, label='Buscar')
-    orden = forms.ChoiceField(choices=[('', 'Ordenar por'), ('nombre', 'Nombre'), ('precio', 'Precio')], required=False)
-    precio_min = forms.DecimalField(max_digits=10, decimal_places=2, required=False, label='Precio Mínimo')
-    precio_max = forms.DecimalField(max_digits=10, decimal_places=2, required=False, label='Precio Máximo')
+    nombre_producto = forms.ChoiceField(
+        choices=[('', 'Todos los productos')],  # Valor inicial vacío
+        required=False,
+        label='Nombre del producto'
+    )
+    precio_min = forms.DecimalField(
+        max_digits=10, decimal_places=2, required=False, label='Precio Mínimo'
+    )
+    precio_max = forms.DecimalField(
+        max_digits=10, decimal_places=2, required=False, label='Precio Máximo'
+    )
+    orden = forms.ChoiceField(
+        choices=[('', 'Ordenar por'), ('nombre', 'Nombre'), ('precio', 'Precio')],
+        required=False
+    )
+    q = forms.CharField(
+        max_length=100, required=False, label='Buscar texto'
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Cargar dinámicamente las opciones de productos
+        productos = Producto.objects.all().values_list('nombre', flat=True).distinct()
+        self.fields['nombre_producto'].choices += [(nombre, nombre) for nombre in productos]
 
     def clean(self):
         cleaned_data = super().clean()

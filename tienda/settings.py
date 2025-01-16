@@ -151,5 +151,5 @@ if DEBUG:
     from django.conf.urls.static import static
 
 
-LOGIN_URL = 'inicio-sesion/'
-LOGOUT_URL = 'inicio-sesion/'
+LOGIN_URL = 'inicio_sesion/'
+LOGOUT_URL = 'inicio_sesion/'
