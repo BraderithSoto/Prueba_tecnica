@@ -62,7 +62,6 @@
                     <input type="number" id="precio_max" name="precio_max" class="form-control" placeholder="Precio máximo" value="{{ request.GET.precio_max }}">
                 </div>
 
-                <!-- Filtro por nombre usando lista desplegable -->
                 <div class="col-md-4 mb-3">
                     <label for="nombre_producto" class="form-label">Nombre del Producto</label>
                     <select id="nombre_producto" name="nombre_producto" class="form-select">
@@ -79,8 +78,9 @@
             <div class="row">
                 <div class="col-md-4 offset-md-4 mb-3">
                     <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-search"></i> Filtrar
+                        <i class="fas fa-search"></i> Filtrar 
                     </button>
+                    
                 </div>
             </div>
         </form>

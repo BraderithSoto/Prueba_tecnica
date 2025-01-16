@@ -10,7 +10,7 @@ class Producto(models.Model):
     especificaciones = models.TextField()
     agotado = models.BooleanField(default=False)
     recomendado = models.BooleanField(default=False)
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)  # Usuario opcional
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)  
 
     def __str__(self):
         return self.nombre
@@ -29,7 +29,7 @@ class Producto(models.Model):
         """Restablece el stock del producto cuando se elimina del carrito."""
         self.cantidad_stock += cantidad
         if self.cantidad_stock > 0:
-            self.agotado = False  # Si el stock es mayor a 0, marcamos el producto como disponible
+            self.agotado = False  
         self.save()
 
     def obtener_precio_en_pesos(self):
@@ -50,19 +50,19 @@ class CarritoItem(models.Model):
 
     def guardar(self):
         """Guarda el carrito, y actualiza el stock del producto."""
-        if self.producto.agotado:  # Verifica si el producto está agotado
+        if self.producto.agotado: 
             raise ValueError("Este producto está agotado y no se puede agregar al carrito.")
         
         if self.producto.cantidad_stock >= self.cantidad:
-            self.producto.reducir_stock(self.cantidad)  # Reduce el stock del producto
-            super().save()  # Guarda el ítem en el carrito
+            self.producto.reducir_stock(self.cantidad)  
+            super().save()  
         else:
             raise ValueError(f"No hay suficiente stock para agregar {self.cantidad} unidades de {self.producto.nombre} al carrito.")
 
     def eliminar(self):
         """Elimina este ítem del carrito y restablece el stock del producto."""
-        self.producto.restablecer_stock(self.cantidad)  # Restablece el stock del producto
-        super().delete()  # Elimina el ítem del carrito
+        self.producto.restablecer_stock(self.cantidad)  
+        super().delete()  
 
 class Pedido(models.Model):
     ESTADOS = [
@@ -80,3 +80,12 @@ class Pedido(models.Model):
 
     def __str__(self):
         return f"Pedido #{self.id} - {self.usuario.username} - {self.estado}"
+
+class ProductoPedido(models.Model):
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name='productos')
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField()
+    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"Producto {self.producto.nombre} en Pedido #{self.pedido.id}"

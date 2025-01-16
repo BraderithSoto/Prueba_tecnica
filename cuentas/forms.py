@@ -31,7 +31,7 @@ class ProductoForm(forms.ModelForm):
 
 class ProductoFiltroForm(forms.Form):
     nombre_producto = forms.ChoiceField(
-        choices=[('', 'Todos los productos')],  # Valor inicial vacío
+        choices=[('', 'Todos los productos')],  
         required=False,
         label='Nombre del producto'
     )
@@ -51,7 +51,7 @@ class ProductoFiltroForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Cargar dinámicamente las opciones de productos
+
         productos = Producto.objects.all().values_list('nombre', flat=True).distinct()
         self.fields['nombre_producto'].choices += [(nombre, nombre) for nombre in productos]
 

@@ -2,10 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .models import Producto, CarritoItem, Pedido
+from .models import Producto, CarritoItem, Pedido, ProductoPedido
 from .forms import ProductoFiltroForm
 from django.contrib.auth import update_session_auth_hash
-
 
 # Bloqueo de vistas
 from django.contrib.auth.decorators import login_required
@@ -33,7 +32,7 @@ def crear_producto(request):
         cantidad_stock = request.POST.get('cantidad_stock')
         descripcion = request.POST.get('descripcion')
         especificaciones = request.POST.get('especificaciones')
-        imagen = request.FILES.get('imagen')  # Para manejar la imagen subida
+        imagen = request.FILES.get('imagen')  
 
         # Crear un nuevo producto
         producto = Producto.objects.create(
@@ -43,7 +42,7 @@ def crear_producto(request):
             descripcion=descripcion,
             especificaciones=especificaciones,
             imagen=imagen,
-            usuario=request.user  # Aseguramos que el producto lo haya creado el usuario actual
+            usuario=request.user 
         )
 
         messages.success(request, "Producto creado con éxito.")
@@ -86,35 +85,30 @@ def eliminar_producto(request, producto_id):
         messages.error(request, "No tienes permiso para eliminar este producto.")
         return redirect('productos')
     
-    if request.method == 'POST':  # Confirmación de eliminación
+    if request.method == 'POST': 
         producto.delete()
         messages.success(request, "Producto eliminado con éxito.")
         return redirect('productos')
 
-    # Si no es POST, mostramos la vista de confirmación
     return render(request, 'cuentas/eliminar_producto.html', {'producto': producto})
 
 @login_required(login_url="inicio_sesion")
 def productos(request):
-    # Crear el formulario de filtros con los datos enviados por GET
+    
     form = ProductoFiltroForm(request.GET)
     
-    # Obtener todos los productos
     productos = Producto.objects.all()
 
-    # Obtener productos del usuario y productos restantes
     productos_usuario = productos.filter(usuario=request.user)
     productos_restantes = productos.exclude(usuario=request.user)
     productos = productos_usuario | productos_restantes
 
-    # Validar el formulario y aplicar los filtros
     if form.is_valid():
-        # Filtro por nombre
+        
         nombre_producto = form.cleaned_data.get('nombre_producto')
         if nombre_producto:
             productos = productos.filter(nombre__icontains=nombre_producto)
 
-        # Filtro por rango de precios
         precio_min = form.cleaned_data.get('precio_min')
         precio_max = form.cleaned_data.get('precio_max')
         if precio_min is not None:
@@ -122,7 +116,6 @@ def productos(request):
         if precio_max is not None:
             productos = productos.filter(precio__lte=precio_max)
 
-        # Filtro por orden (nombre o precio)
         orden = form.cleaned_data.get('orden')
         if orden == 'nombre':
             productos = productos.order_by('nombre')
@@ -132,7 +125,7 @@ def productos(request):
     return render(request, 'cuentas/productos.html', {
         'productos': productos,
         'form': form,
-        'todos_los_productos': Producto.objects.all(),  # Pasamos todos los productos para la lista desplegable
+        'todos_los_productos': Producto.objects.all(),  #
     })
 
 def detalle_producto(request, producto_id):
@@ -253,6 +246,24 @@ def finalizar_compra(request):
     context = {}
     return render(request, 'cuentas/finalizar_compra.html', context)
 
+@login_required(login_url="inicio_sesion")
+def mis_pedidos(request):
+    pedidos = Pedido.objects.filter(usuario=request.user).order_by('-fecha')
+    for pedido in pedidos:
+        pedido.precio_total = f"${pedido.total:,.2f}"  # Formatear el precio en pesos colombianos
+    
+    return render(request, 'cuentas/mis_pedidos.html', {'pedidos': pedidos})
+
+
+def detalle_pedido(request, pedido_id):
+    pedido = Pedido.objects.get(id=pedido_id, usuario=request.user)
+    productos_en_pedido = ProductoPedido.objects.filter(pedido=pedido)  # Asegúrate de usar la relación correcta
+    context = {
+        'pedido': pedido,
+        'productos_en_pedido': productos_en_pedido,
+    }
+    return render(request, 'cuentas/detalle_pedido.html', context)
+
 def registro(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -317,35 +328,33 @@ def cerrar_sesion(request):
 @login_required
 def perfil_usuario(request):
     if request.method == 'POST':
-        # Obtener datos del formulario
+        
         username = request.POST.get('username')
         email = request.POST.get('email')
         old_password = request.POST.get('old_password')
         new_password = request.POST.get('new_password')
         confirm_password = request.POST.get('confirm_password')
 
-        user = request.user  # Usuario autenticado actual
+        user = request.user  
 
-        # Actualización de nombre de usuario y correo
         if username and email:
             user.username = username
             user.email = email
             user.save()
             messages.success(request, "Perfil actualizado correctamente.")
 
-        # Actualización de contraseña
         if old_password and new_password and confirm_password:
-            if user.check_password(old_password):  # Verificar la contraseña actual
-                if new_password == confirm_password:  # Confirmar que las nuevas coinciden
+            if user.check_password(old_password):  
+                if new_password == confirm_password:  
                     user.set_password(new_password)
                     user.save()
-                    update_session_auth_hash(request, user)  # Mantener la sesión iniciada
+                    update_session_auth_hash(request, user)  
                     messages.success(request, "Contraseña actualizada correctamente.")
                 else:
                     messages.error(request, "Las nuevas contraseñas no coinciden.")
             else:
                 messages.error(request, "La contraseña actual es incorrecta.")
         
-        return redirect('perfil_usuario')  # Redirigir a la misma página
+        return redirect('perfil_usuario')  
 
     return render(request, 'cuentas/perfil_usuario.html')
