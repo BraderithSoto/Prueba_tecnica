@@ -5,6 +5,8 @@ from django.contrib import messages
 from .models import Producto, CarritoItem, Pedido, ProductoPedido
 from .forms import ProductoFiltroForm
 from django.contrib.auth import update_session_auth_hash
+from django.db.models import Sum
+
 
 # Bloqueo de vistas
 from django.contrib.auth.decorators import login_required
@@ -94,17 +96,18 @@ def eliminar_producto(request, producto_id):
 
 @login_required(login_url="inicio_sesion")
 def productos(request):
-    
     form = ProductoFiltroForm(request.GET)
     
+    # Obtener todos los productos
     productos = Producto.objects.all()
 
+    # Filtrar los productos por el usuario que está logueado
     productos_usuario = productos.filter(usuario=request.user)
     productos_restantes = productos.exclude(usuario=request.user)
     productos = productos_usuario | productos_restantes
 
+    # Filtrar según los criterios del formulario
     if form.is_valid():
-        
         nombre_producto = form.cleaned_data.get('nombre_producto')
         if nombre_producto:
             productos = productos.filter(nombre__icontains=nombre_producto)
@@ -122,15 +125,25 @@ def productos(request):
         elif orden == 'precio':
             productos = productos.order_by('precio')
 
+    # Contar los productos únicos en el carrito
+    carrito_count = CarritoItem.objects.filter(usuario=request.user).count()
+
+    # Preparar el diccionario de contextos
     return render(request, 'cuentas/productos.html', {
         'productos': productos,
         'form': form,
-        'todos_los_productos': Producto.objects.all(),  #
+        'todos_los_productos': Producto.objects.all(),
+        'carrito_count': carrito_count,
     })
 
 def detalle_producto(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
     return render(request, 'cuentas/detalle_producto.html', {'producto': producto})
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import CarritoItem
 
 @login_required(login_url="inicio_sesion")
 def carrito(request):
@@ -139,19 +152,25 @@ def carrito(request):
         return redirect('inicio_sesion')
     
     carrito_items = CarritoItem.objects.filter(usuario=request.user)
+    
     carrito_items_disponibles = [item for item in carrito_items if item.producto.cantidad_stock > 0]
-    total = sum(item.total_precio() for item in carrito_items_disponibles)
-
+    
     productos_agotados = [item for item in carrito_items if item.producto.cantidad_stock <= 0]
-
+    
+    total = sum(item.total_precio() for item in carrito_items_disponibles)
+    
     if not carrito_items_disponibles:
         messages.info(request, "Tu carrito está vacío.")
     
+    carrito_count = carrito_items.count()
+
     return render(request, 'cuentas/carrito.html', {
         'carrito_items': carrito_items_disponibles, 
         'total': total,
-        'productos_agotados': productos_agotados
+        'productos_agotados': productos_agotados,
+        'carrito_count': carrito_count,  
     })
+
 
 @login_required(login_url="inicio_sesion")
 def agregar_al_carrito(request, producto_id):

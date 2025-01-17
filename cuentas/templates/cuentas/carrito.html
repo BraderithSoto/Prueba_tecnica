@@ -33,6 +33,14 @@
                             <i class="fas fa-boxes"></i> pedidos
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{% url 'carrito' %}" class="nav-link position-relative">
+                            <i class="fas fa-shopping-cart"></i> Carrito
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ carrito_count|default:0 }}
+                            </span>
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>

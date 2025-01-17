@@ -1,11 +1,49 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <title>Detalle del Pedido</title>
+    <title>Factura</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     {% load static %}
     <link rel="stylesheet" href="{% static 'cuentas/styles/carrito.css' %}">
+    <style>
+        /* Estilos específicos para la factura */
+        .factura-container {
+            border: 2px solid #1C6E6C;
+            border-radius: 10px;
+            padding: 20px;
+            background-color: #F9F9F9; /* Fondo claro para la factura */
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .factura-header {
+            background-color: #A7D8D1; /* Verde menta */
+            padding: 15px;
+            border-radius: 10px 10px 0 0;
+            color: #1C6E6C; /* Texto en verde más oscuro */
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .factura-detalles {
+            margin-top: 20px;
+        }
+        .factura-tabla th, .factura-tabla td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        .factura-tabla th {
+            background-color:  #A7D8D1;
+            color: rgb(0, 0, 0);
+        }
+        .factura-total {
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: right;
+            margin-top: 20px;
+            color: #1C6E6C;
+        }
+    </style>
 </head>
 <body>
     <!-- Encabezado con barra de navegación -->
@@ -38,60 +76,48 @@
         </div>
     </nav>
 
-    <!-- Mostrar los mensajes de Django -->
-    <div class="container mt-5">
-        {% if messages %}
-        <div class="alert alert-info">
-            {% for message in messages %}
-                <p>{{ message }}</p>
-            {% endfor %}
+    <!-- Contenido principal -->
+    <div class="container mt-5 factura-container">
+        <div class="factura-header">
+            Factura
         </div>
-        {% endif %}
-        
-        <h1 class="text-center mb-4">Detalle del Pedido #{{ pedido.id }}</h1>
-
-        <h4 class="mb-4">Estado: {{ pedido.estado|capfirst }}</h4>
-        <h5>Dirección: {{ pedido.direccion }}</h5>
-        <h5>Metodo de pago: {{ pedido.metodo_pago }}</h5>
-        <h5>Total: {{ pedido.total|floatformat:2 }} COP</h5>
-
-        {% if productos_en_pedido %}
-        <div class="table-responsive">
-            <table class="table table-bordered">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Producto</th>
-                        <th>Precio</th>
-                        <th>Cantidad</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
+        <div class="factura-detalles">
+            <table class="table factura-tabla">
                 <tbody>
-                    {% for item in productos_en_pedido %}
                     <tr>
-                        <td>{{ item.producto.nombre }}</td>
-                        <td>{{ item.producto.obtener_precio_en_pesos }}</td>
-                        <td>{{ item.cantidad }}</td>
-                        <td>{{ item.total_precio|floatformat:2 }} COP</td>
+                        <th>Número de Pedido:</th>
+                        <td>{{ pedido.id }}</td>
                     </tr>
-                    {% endfor %}
+                    <tr>
+                        <th>Fecha:</th>
+                        <td>{{ pedido.fecha|date:"d/m/Y" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Estado:</th>
+                        <td>{{ pedido.estado|capfirst }}</td>
+                    </tr>
+                    <tr>
+                        <th>Método de Pago:</th>
+                        <td>{{ pedido.metodo_pago }}</td>
+                    </tr>
+                    <tr>
+                        <th>Dirección de Entrega:</th>
+                        <td>{{ pedido.direccion }}</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
-
+        <div class="factura-total">
+            Total Pagado: {{ pedido.total|floatformat:2 }} COP
+        </div>
         <div class="text-center mt-4">
             <a href="{% url 'productos' %}" class="btn btn-primary">
                 <i class="fas fa-shopping-bag"></i> Seguir Comprando
             </a>
         </div>
-        {% else %}
-        <div class="alert alert-warning text-center">
-            <h4>No hay productos en este pedido.</h4>
-            <p>Explora nuestros <a href="{% url 'productos' %}">productos</a> y realiza tu compra.</p>
-        </div>
-        {% endif %}
     </div>
 
+    <!-- Pie de página -->
     <footer class="bg-success text-white text-center py-3 mt-4">
         <p class="mb-0" style="font-size: 1.1rem;">© 2025 Tienda Virtual. Todos los derechos reservados.</p>
     </footer>
