@@ -12,14 +12,14 @@
             border: 2px solid #1C6E6C;
             border-radius: 10px;
             padding: 20px;
-            background-color: #F9F9F9; /* Fondo claro para la factura */
+            background-color: #F9F9F9;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
         }
         .factura-header {
-            background-color: #A7D8D1; /* Verde menta */
+            background-color: #A7D8D1;
             padding: 15px;
             border-radius: 10px 10px 0 0;
-            color: #1C6E6C; /* Texto en verde más oscuro */
+            color: #1C6E6C;
             text-align: center;
             font-size: 1.5rem;
             font-weight: bold;
@@ -33,7 +33,7 @@
             text-align: left;
         }
         .factura-tabla th {
-            background-color:  #A7D8D1;
+            background-color: #A7D8D1;
             color: rgb(0, 0, 0);
         }
         .factura-total {
@@ -46,78 +46,74 @@
     </style>
 </head>
 <body>
-    <!-- Encabezado con barra de navegación -->
-    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #A7D8D1;"> <!-- Verde menta -->
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #A7D8D1;">
         <div class="container">
-            <a class="navbar-brand" href="#" style="color: #1C6E6C; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">Tienda Virtual</a> <!-- Texto en un verde más oscuro -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a href="{% url 'home' %}" class="nav-link">
-                            <i class="fas fa-home"></i> Inicio
-                        </a>
-                    </li>
-                    <li class="nav-item"><span class="navbar-text mx-2">|</span></li>
-                    <li class="nav-item">
-                        <a href="{% url 'productos' %}" class="nav-link">
-                            <i class="fas fa-boxes"></i> Productos
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'mis_pedidos' %}" class="nav-link">
-                            <i class="fas fa-boxes"></i> Mis Pedidos
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            <a class="navbar-brand" href="#" style="color: #1C6E6C; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">Tienda Virtual</a>
         </div>
     </nav>
 
-    <!-- Contenido principal -->
-    <div class="container mt-5 factura-container">
-        <div class="factura-header">
-            Factura
-        </div>
-        <div class="factura-detalles">
-            <table class="table factura-tabla">
-                <tbody>
-                    <tr>
-                        <th>Número de Pedido:</th>
-                        <td>{{ pedido.id }}</td>
-                    </tr>
-                    <tr>
-                        <th>Fecha:</th>
-                        <td>{{ pedido.fecha|date:"d/m/Y" }}</td>
-                    </tr>
-                    <tr>
-                        <th>Estado:</th>
-                        <td>{{ pedido.estado|capfirst }}</td>
-                    </tr>
-                    <tr>
-                        <th>Método de Pago:</th>
-                        <td>{{ pedido.metodo_pago }}</td>
-                    </tr>
-                    <tr>
-                        <th>Dirección de Entrega:</th>
-                        <td>{{ pedido.direccion }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="factura-total">
-            Total Pagado: {{ pedido.total|floatformat:2 }} COP
+    <div class="container mt-5">
+        <div id="factura" class="factura-container">
+            <div class="factura-header">Factura</div>
+            <div class="factura-detalles">
+                <table class="table factura-tabla">
+                    <tbody>
+                        <tr>
+                            <th>Número de Pedido:</th>
+                            <td>{{ pedido.id }}</td>
+                        </tr>
+                        <tr>
+                            <th>Fecha:</th>
+                            <td>{{ pedido.fecha|date:"d/m/Y" }}</td>
+                        </tr>
+                        <tr>
+                            <th>Estado:</th>
+                            <td>{{ pedido.estado|capfirst }}</td>
+                        </tr>
+                        <tr>
+                            <th>Método de Pago:</th>
+                            <td>{{ pedido.metodo_pago }}</td>
+                        </tr>
+                        <tr>
+                            <th>Dirección de Entrega:</th>
+                            <td>{{ pedido.direccion }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="factura-total">Total Pagado: {{ pedido.total|floatformat:0 }} COP</div>
         </div>
         <div class="text-center mt-4">
             <a href="{% url 'productos' %}" class="btn btn-primary">
                 <i class="fas fa-shopping-bag"></i> Seguir Comprando
             </a>
+            <button class="btn btn-success ms-2" id="guardar-pdf">
+                <i class="fas fa-file-pdf"></i> Guardar como PDF
+            </button>
         </div>
     </div>
 
-    <!-- Pie de página -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script>
+        document.getElementById('guardar-pdf').addEventListener('click', function () {
+            const { jsPDF } = window.jspdf;
+
+            // Seleccionar el contenido de la factura
+            const factura = document.getElementById('factura');
+
+            // Usar html2canvas para renderizar el contenido como imagen
+            html2canvas(factura).then(function (canvas) {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF();
+
+                // Agregar la imagen al PDF
+                pdf.addImage(imgData, 'PNG', 10, 10, 190, 0); // Ajustar dimensiones según el contenido
+                pdf.save('Factura_{{ pedido.id }}.pdf');
+            });
+        });
+    </script>
+
     <footer class="bg-success text-white text-center py-3 mt-4">
         <p class="mb-0" style="font-size: 1.1rem;">© 2025 Tienda Virtual. Todos los derechos reservados.</p>
     </footer>
