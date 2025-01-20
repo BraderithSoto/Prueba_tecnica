@@ -10,7 +10,7 @@ class Producto(models.Model):
     especificaciones = models.TextField()
     agotado = models.BooleanField(default=False)
     recomendado = models.BooleanField(default=False)
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)  
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=False)  # Cambiado `blank` a False
 
     def __str__(self):
         return self.nombre
@@ -35,6 +35,7 @@ class Producto(models.Model):
     def obtener_precio_en_pesos(self):
         """Devuelve el precio formateado en pesos colombianos."""
         return f"${self.precio:,.2f}"
+
 
 class CarritoItem(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -64,6 +65,7 @@ class CarritoItem(models.Model):
         self.producto.restablecer_stock(self.cantidad)  
         super().delete()  
 
+
 class Pedido(models.Model):
     ESTADOS = [
         ('en_proceso', 'En proceso'),
@@ -80,6 +82,7 @@ class Pedido(models.Model):
 
     def __str__(self):
         return f"Pedido #{self.id} - {self.usuario.username} - {self.estado}"
+
 
 class ProductoPedido(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name='productos')

@@ -64,7 +64,7 @@
                     <tr>
                         <td>{{ pedido.id }}</td>
                         <td>{{ pedido.fecha }}</td>
-                        <td>{{ pedido.total|floatformat:2 }} COP</td>
+                        <td>{{ pedido.total|floatformat:0 }} COP</td>
                         <td>{{ pedido.estado }}</td>
                         <td>
                             <a href="{% url 'detalle_pedido' pedido.id %}" class="btn btn-info btn-sm">
