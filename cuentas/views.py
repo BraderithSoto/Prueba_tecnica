@@ -7,7 +7,6 @@ from .forms import ProductoFiltroForm
 from django.contrib.auth import update_session_auth_hash
 from django.db.models import Sum
 
-
 # Bloqueo de vistas
 from django.contrib.auth.decorators import login_required
 
@@ -36,7 +35,6 @@ def crear_producto(request):
         especificaciones = request.POST.get('especificaciones')
         imagen = request.FILES.get('imagen')  
 
-        # Crear un nuevo producto
         producto = Producto.objects.create(
             nombre=nombre,
             precio=precio,
@@ -98,10 +96,8 @@ def eliminar_producto(request, producto_id):
 def productos(request):
     form = ProductoFiltroForm(request.GET)
     
-    # Obtener todos los productos
     productos = Producto.objects.all()
 
-    # Filtrar los productos por el usuario que está logueado
     productos_usuario = productos.filter(usuario=request.user)
     productos_restantes = productos.exclude(usuario=request.user)
     productos = productos_usuario | productos_restantes
@@ -125,10 +121,8 @@ def productos(request):
         elif orden == 'precio':
             productos = productos.order_by('precio')
 
-    # Contar los productos únicos en el carrito
     carrito_count = CarritoItem.objects.filter(usuario=request.user).count()
 
-    # Preparar el diccionario de contextos
     return render(request, 'cuentas/productos.html', {
         'productos': productos,
         'form': form,
@@ -139,11 +133,6 @@ def productos(request):
 def detalle_producto(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
     return render(request, 'cuentas/detalle_producto.html', {'producto': producto})
-
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from .models import CarritoItem
 
 @login_required(login_url="inicio_sesion")
 def carrito(request):
@@ -269,14 +258,14 @@ def finalizar_compra(request):
 def mis_pedidos(request):
     pedidos = Pedido.objects.filter(usuario=request.user).order_by('-fecha')
     for pedido in pedidos:
-        pedido.precio_total = f"${pedido.total:,.2f}"  # Formatear el precio en pesos colombianos
+        pedido.precio_total = f"${pedido.total:,.2f}"  
     
     return render(request, 'cuentas/mis_pedidos.html', {'pedidos': pedidos})
 
 
 def detalle_pedido(request, pedido_id):
     pedido = Pedido.objects.get(id=pedido_id, usuario=request.user)
-    productos_en_pedido = ProductoPedido.objects.filter(pedido=pedido)  # Asegúrate de usar la relación correcta
+    productos_en_pedido = ProductoPedido.objects.filter(pedido=pedido)  
     context = {
         'pedido': pedido,
         'productos_en_pedido': productos_en_pedido,
